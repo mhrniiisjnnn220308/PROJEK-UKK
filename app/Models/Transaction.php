@@ -17,16 +17,5 @@ class Transaction extends Model
         'uang_kembali',
     ];
 
-    // Hapus unique constraint dari model
-    // protected $unique = ['nomor_unik']; // HAPUS INI JIKA ADA
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'id_produk');
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class, 'id_user');
-    }
 }
