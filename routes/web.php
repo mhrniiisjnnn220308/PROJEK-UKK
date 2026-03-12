@@ -11,10 +11,9 @@ use App\Http\Controllers\Kasir\TransactionController;
 
 // Login Routes
 Route::get('/', [AuthController::class, 'showLogin'])->name('login');
-Route::get('/', [AuthController::class, 'showLogin'])->name('login');
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login.show');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('/redirect-dashboard', [AuthController::class, 'redirectDashboard'])->name('redirect.dashboard');
 Route::get('/redirect-dashboard', [AuthController::class, 'redirectDashboard'])->name('redirect.dashboard');
 
 // Admin Routes
@@ -53,7 +52,9 @@ Route::prefix('owner')->middleware(['auth', 'role:owner'])->group(function () {
     
     // Reports
     Route::get('/reports', [\App\Http\Controllers\Owner\ReportController::class, 'index'])->name('owner.reports.index');
+    Route::get('/reports/pdf', [\App\Http\Controllers\Owner\ReportController::class, 'printPdf'])->name('owner.reports.pdf');
     Route::get('/reports/products', [\App\Http\Controllers\Owner\ReportController::class, 'products'])->name('owner.reports.products');
+    Route::get('/reports/products/pdf', [\App\Http\Controllers\Owner\ReportController::class, 'productsPdf'])->name('owner.reports.products.pdf');
     
     // Logs
     Route::get('/logs', [\App\Http\Controllers\Owner\LogController::class, 'index'])->name('owner.logs.index');

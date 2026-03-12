@@ -4,10 +4,17 @@
 
 @section('content')
 <div class="page-header">
-    <h4 class="page-title mb-0">
-        <i class="bi bi-box-seam me-2" style="color: #6f42c1;"></i>Data Produk
-    </h4>
-    <small class="text-muted">Daftar semua produk dalam sistem</small>
+    <div>
+        <h4 class="page-title mb-0">
+            <i class="bi bi-box-seam me-2" style="color: #6f42c1;"></i>Data Produk
+        </h4>
+        <small class="text-muted">Daftar semua produk dalam sistem</small>
+    </div>
+    <div>
+        <a href="{{ route('owner.reports.products.pdf') }}" target="_blank" class="btn btn-danger">
+            <i class="bi bi-file-pdf me-2"></i>Download PDF
+        </a>
+    </div>
 </div>
 
 <!-- Tabel Produk -->
@@ -82,31 +89,41 @@
 
 <!-- Statistik Produk -->
 <div class="row mt-4">
-    <div class="col-md-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-box-seam text-primary" style="font-size: 48px;"></i>
+                <h3 class="mt-3">{{ $products->total() }}</h3>
+                <p class="text-muted mb-0">Total Produk</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
         <div class="card shadow-sm">
             <div class="card-body text-center">
                 <i class="bi bi-check-circle text-success" style="font-size: 48px;"></i>
-                <h3 class="mt-3">{{ $products->where('status', 'aktif')->count() }}</h3>
+                <h3 class="mt-3">{{ \App\Models\Product::where('status', 'aktif')->count() }}</h3>
                 <p class="text-muted mb-0">Produk Aktif</p>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card shadow-sm">
             <div class="card-body text-center">
                 <i class="bi bi-exclamation-triangle text-warning" style="font-size: 48px;"></i>
-                <h3 class="mt-3">{{ $products->where('stok', '<', 10)->where('status', 'aktif')->count() }}</h3>
+                <h3 class="mt-3">{{ \App\Models\Product::where('stok', '<', 10)->where('status', 'aktif')->count() }}</h3>
                 <p class="text-muted mb-0">Stok Menipis</p>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="card shadow-sm">
             <div class="card-body text-center">
                 <i class="bi bi-x-circle text-danger" style="font-size: 48px;"></i>
-                <h3 class="mt-3">{{ $products->where('status', 'nonaktif')->count() }}</h3>
+                <h3 class="mt-3">{{ \App\Models\Product::where('status', 'nonaktif')->count() }}</h3>
                 <p class="text-muted mb-0">Produk Nonaktif</p>
             </div>
         </div>

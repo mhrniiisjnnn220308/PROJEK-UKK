@@ -10,14 +10,18 @@ use App\Models\Log;
 
 class AuthController extends Controller
 {
+    // Tampilkan halaman login
     public function showLogin()
     {
+        // Jika sudah login, redirect ke dashboard sesuai role
         if (Auth::check()) {
-            return redirect()->route('redirect.dashboard');
+            return $this->redirectDashboard();
         }
+        
         return view('auth.login');
     }
 
+    // Proses login
     public function login(Request $request)
     {
         $request->validate([
@@ -44,33 +48,35 @@ class AuthController extends Controller
                 'activity' => "Login ke sistem sebagai {$user->role}"
             ]);
 
-            return redirect()->route('redirect.dashboard');
+            return $this->redirectDashboard();
         }
 
         return back()->with('error', 'Password salah!');
     }
 
+    // Redirect ke dashboard sesuai role
     public function redirectDashboard()
     {
-        if (Auth::check()) {
-            $role = Auth::user()->role;
-            
-            switch ($role) {
-                case 'admin':
-                    return redirect()->route('admin.dashboard');
-                case 'kasir':
-                    return redirect()->route('kasir.transactions.dashboard');
-                case 'owner':
-                    return redirect()->route('owner.dashboard');
-                default:
-                    Auth::logout();
-                    return redirect()->route('login');
-            }
+        if (!Auth::check()) {
+            return redirect()->route('login');
         }
         
-        return redirect()->route('login');
+        $role = Auth::user()->role;
+        
+        switch ($role) {
+            case 'admin':
+                return redirect()->route('admin.dashboard');
+            case 'kasir':
+                return redirect()->route('kasir.transactions.dashboard');
+            case 'owner':
+                return redirect()->route('owner.dashboard');
+            default:
+                Auth::logout();
+                return redirect()->route('login')->with('error', 'Role tidak valid!');
+        }
     }
 
+    // Logout
     public function logout()
     {
         if (Auth::check()) {
@@ -81,6 +87,9 @@ class AuthController extends Controller
         }
         
         Auth::logout();
-        return redirect()->route('login');
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+        
+        return redirect()->route('login')->with('success', 'Berhasil logout!');
     }
 }

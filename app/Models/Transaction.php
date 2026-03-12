@@ -17,5 +17,15 @@ class Transaction extends Model
         'uang_kembali',
     ];
 
+    
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'id_produk');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'id_user');
+    }
 }

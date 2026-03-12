@@ -4,32 +4,39 @@
 
 @section('content')
 <div class="page-header">
-    <h4 class="page-title mb-0">
-        <i class="bi bi-graph-up me-2" style="color: #6f42c1;"></i>Laporan Transaksi
-    </h4>
-    <small class="text-muted">Filter dan lihat laporan transaksi</small>
+    <div>
+        <h4 class="page-title mb-0">
+            <i class="bi bi-graph-up me-2" style="color: #6f42c1;"></i>Laporan Transaksi
+        </h4>
+        <small class="text-muted">Filter dan lihat laporan transaksi</small>
+    </div>
+    <div>
+        <button type="button" class="btn btn-danger" onclick="printPdf()">
+            <i class="bi bi-file-pdf me-2"></i>Download PDF
+        </button>
+    </div>
 </div>
 
 <!-- Filter Form -->
 <div class="card shadow-sm mb-4">
     <div class="card-body">
-        <form method="GET" action="{{ route('owner.reports.index') }}">
+        <form method="GET" action="{{ route('owner.reports.index') }}" id="filterForm">
             <div class="row">
                 <div class="col-md-3 mb-3">
                     <label class="form-label">Tanggal Mulai</label>
-                    <input type="date" class="form-control" name="tanggal_mulai" 
+                    <input type="date" class="form-control" name="tanggal_mulai" id="tanggal_mulai"
                            value="{{ request('tanggal_mulai') }}">
                 </div>
                 
                 <div class="col-md-3 mb-3">
                     <label class="form-label">Tanggal Selesai</label>
-                    <input type="date" class="form-control" name="tanggal_selesai" 
+                    <input type="date" class="form-control" name="tanggal_selesai" id="tanggal_selesai"
                            value="{{ request('tanggal_selesai') }}">
                 </div>
                 
                 <div class="col-md-3 mb-3">
                     <label class="form-label">Kasir</label>
-                    <select class="form-select" name="kasir">
+                    <select class="form-select" name="kasir" id="kasir">
                         <option value="">Semua Kasir</option>
                         @foreach($kasirList as $kasir)
                             <option value="{{ $kasir->id }}" {{ request('kasir') == $kasir->id ? 'selected' : '' }}>
@@ -41,7 +48,7 @@
                 
                 <div class="col-md-3 mb-3">
                     <label class="form-label">Produk</label>
-                    <select class="form-select" name="produk">
+                    <select class="form-select" name="produk" id="produk">
                         <option value="">Semua Produk</option>
                         @foreach($produkList as $produk)
                             <option value="{{ $produk->id }}" {{ request('produk') == $produk->id ? 'selected' : '' }}>
@@ -154,3 +161,31 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function printPdf() {
+    // Ambil parameter filter dari form
+    const tanggalMulai = document.getElementById('tanggal_mulai').value;
+    const tanggalSelesai = document.getElementById('tanggal_selesai').value;
+    const kasir = document.getElementById('kasir').value;
+    const produk = document.getElementById('produk').value;
+    
+    // Buat URL dengan parameter
+    let url = '{{ route("owner.reports.pdf") }}';
+    const params = new URLSearchParams();
+    
+    if (tanggalMulai) params.append('tanggal_mulai', tanggalMulai);
+    if (tanggalSelesai) params.append('tanggal_selesai', tanggalSelesai);
+    if (kasir) params.append('kasir', kasir);
+    if (produk) params.append('produk', produk);
+    
+    if (params.toString()) {
+        url += '?' + params.toString();
+    }
+    
+    // Buka di tab baru
+    window.open(url, '_blank');
+}
+</script>
+@endpush
