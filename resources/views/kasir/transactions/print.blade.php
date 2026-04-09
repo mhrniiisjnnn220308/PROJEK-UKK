@@ -53,6 +53,26 @@
             margin: 3px 0;
         }
         
+        /* TAMBAHAN BARU: Style untuk info pemesanan */
+        .order-type {
+            background: #f0f0f0;
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .order-type.dine-in {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .order-type.take-away {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
         .items {
             margin-bottom: 10px;
             padding-bottom: 10px;
@@ -120,11 +140,19 @@
             <p>Telp: (022) 1234567</p>
         </div>
         
+        <!-- TAMBAHAN BARU: Info Jenis Pemesanan -->
+        <div class="order-type {{ $firstTransaction->jenis_pemesanan == 'dine_in' ? 'dine-in' : 'take-away' }}">
+            {{ $firstTransaction->jenis_pemesanan == 'dine_in' ? 'DINE IN' : 'TAKE AWAY' }}
+            @if($firstTransaction->jenis_pemesanan == 'dine_in' && $firstTransaction->table)
+                <br>MEJA: {{ $firstTransaction->table->nomor_meja }}
+            @endif
+        </div>
+        
         <!-- Info Transaksi -->
         <div class="info">
             <div class="info-row">
                 <span>No. Transaksi</span>
-                <strong>{{ $firstTransaction->nomor_unik }}</strong>
+                <strong>{{ substr($firstTransaction->nomor_unik, 0, 12) }}...</strong>
             </div>
             <div class="info-row">
                 <span>Tanggal</span>
@@ -182,6 +210,11 @@
         <div class="footer">
             <p>*** TERIMA KASIH ***</p>
             <p>Selamat datang kembali</p>
+            @if($firstTransaction->jenis_pemesanan == 'dine_in' && $firstTransaction->table)
+            <p style="margin-top: 10px;">Selamat menikmati di Meja {{ $firstTransaction->table->nomor_meja }}</p>
+            @else
+            <p style="margin-top: 10px;">Selamat menikmati!</p>
+            @endif
         </div>
     </div>
     
@@ -195,7 +228,7 @@
     </div>
     
     <script>
-        // Auto print saat halaman dibuka
+        // Auto print saat halaman dibuka (opsional)
         // window.onload = function() {
         //     window.print();
         // }

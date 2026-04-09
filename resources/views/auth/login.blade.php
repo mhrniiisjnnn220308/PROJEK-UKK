@@ -178,7 +178,6 @@
 </head>
 <body>
     <div class="login-container">
-        <!-- Bagian Kiri dengan Logo dan Informasi Sistem -->
         <div class="login-left">
             <div class="logo-container">
                 <div class="logo">
@@ -243,19 +242,6 @@
                 <button type="submit" class="btn btn-primary btn-login w-100 mb-3">
                     <i class="bi bi-box-arrow-in-right me-2"></i>Login
                 </button>
-                
-                {{-- <div class="divider">
-                    <span>Informasi Login</span>
-                </div> --}}
-                
-                {{-- <div class="login-info">
-                    <small class="text-muted">
-                        <strong>Info Login Default:</strong><br>
-                        Admin: <code>admin</code> / <code>admin123</code><br>
-                        Kasir: <code>kasir1</code> / <code>kasir123</code><br>
-                        Owner: <code>owner</code> / <code>owner123</code>
-                    </small>
-                </div> --}}
             </form>
         </div>
     </div>

@@ -10,6 +10,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        
         // Insert Users
         DB::table('users')->insert([
             [
@@ -60,10 +61,21 @@ class DatabaseSeeder extends Seeder
             ['kategori_id' => 2, 'nama_produk' => 'Jus Alpukat', 'foto' => null, 'deskripsi' => 'Jus alpukat segar dengan coklat', 'harga_produk' => 10000, 'stok' => 50, 'status' => 'aktif', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
+        // Insert Tables  ← TAMBAHAN BARU
+        DB::table('tables')->insert([
+            ['nama_meja' => 'Meja 1', 'kapasitas' => 4, 'status' => 'tersedia', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_meja' => 'Meja 2', 'kapasitas' => 4, 'status' => 'tersedia', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_meja' => 'Meja 3', 'kapasitas' => 6, 'status' => 'tersedia', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_meja' => 'Meja 4', 'kapasitas' => 6, 'status' => 'tersedia', 'created_at' => now(), 'updated_at' => now()],
+            ['nama_meja' => 'Meja 5', 'kapasitas' => 2, 'status' => 'tersedia', 'created_at' => now(), 'updated_at' => now()],
+        ]);
+
         // Insert Logs
         DB::table('logs')->insert([
             ['id_user' => 1, 'activity' => 'Admin login ke sistem', 'created_at' => now(), 'updated_at' => now()],
             ['id_user' => 1, 'activity' => 'Admin menambahkan produk: Nasi Goreng', 'created_at' => now(), 'updated_at' => now()],
         ]);
+
+
     }
 }

@@ -8,12 +8,25 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
+        /* ============================================
+           RESET & GLOBAL
+        ============================================ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
             background-color: #f5f5f5;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        /* Header */
+
+        /* ============================================
+           STICKY NAV
+        ============================================ */
+        .nav-sticky-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 1050;
+        }
+
         .top-header {
             background: linear-gradient(135deg, #FF8C42 0%, #FF6B35 100%);
             color: white;
@@ -23,23 +36,136 @@
             align-items: center;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
+
+        .navbar-menu {
+            background: white;
+            border-bottom: 3px solid #FF8C42;
+            padding: 0 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .navbar-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            min-height: 56px;
+            flex-wrap: wrap;
+        }
+
+        .menu-label {
+            color: #999;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        /* ============================================
+           NAVBAR LINKS
+        ============================================ */
+        .nav-custom {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-custom .nav-link-custom {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 7px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: #FF8C42;
+            border: 2px solid transparent;
+            white-space: nowrap;
+        }
+
+        .nav-custom .nav-link-custom:hover {
+            background: rgba(255,140,66,0.1);
+            border-color: #FF8C42;
+        }
+
+        .nav-custom .nav-link-custom.active {
+            background: #FF8C42;
+            color: white;
+            border-color: #FF8C42;
+        }
+
+        .nav-link-logout { color: #dc3545 !important; }
+        .nav-link-logout:hover {
+            background: rgba(220,53,69,0.1) !important;
+            border-color: #dc3545 !important;
+        }
+
+        /* ============================================
+           BUTTONS
+        ============================================ */
+        .btn-primary-custom,
+        button.btn-primary-custom,
+        a.btn-primary-custom {
+            background: #FF8C42 !important;
+            color: white !important;
+            border: none !important;
+            padding: 8px 20px !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            text-decoration: none !important;
+        }
+        .btn-primary-custom:hover {
+            background: #E67E22 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(255,140,66,0.3) !important;
+        }
+
+        .btn-outline-custom {
+            background: transparent !important;
+            border: 2px solid #FF8C42 !important;
+            color: #FF8C42 !important;
+            padding: 8px 20px !important;
+            border-radius: 8px !important;
+            font-weight: 600 !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer !important;
+        }
+        .btn-outline-custom:hover {
+            background: #FF8C42 !important;
+            color: white !important;
+        }
+
+        /* ============================================
+           LOGO & USER
+        ============================================ */
         .logo-section {
             display: flex;
             align-items: center;
             gap: 15px;
         }
-        
+
         .logo-icon {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
             overflow: hidden;
-            padding: 8px;
+            padding: 6px;
         }
 
         .logo-icon img {
@@ -47,7 +173,7 @@
             height: 100%;
             object-fit: contain;
         }
-        
+
         .user-info {
             display: flex;
             align-items: center;
@@ -56,7 +182,7 @@
             padding: 8px 15px;
             border-radius: 25px;
         }
-        
+
         .user-avatar {
             width: 35px;
             height: 35px;
@@ -68,77 +194,56 @@
             color: #FF8C42;
             font-weight: bold;
         }
-        
-        /* Main Content - Full width untuk kasir */
+
+        /* ============================================
+           MAIN CONTENT
+        ============================================ */
         .main-content {
-            padding: 30px;
-            min-height: calc(100vh - 110px);
+            padding: 25px 30px;
+            min-height: calc(100vh - 170px);
         }
-        
+
         .page-header {
             background: white;
-            padding: 20px 30px;
+            padding: 18px 25px;
             border-radius: 12px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
         }
-        
+
         .page-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: #333;
             margin: 0;
         }
-        
-        .page-title i {
-            color: #FF8C42;
-            margin-right: 10px;
-        }
-        
-        /* Custom Buttons */
-        .btn-primary-custom {
-            background: #FF8C42;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-primary-custom:hover {
-            background: #FF6B35;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 140, 66, 0.3);
-            color: white;
-        }
-        
-        .btn-outline-custom {
-            border: 2px solid #FF8C42;
-            color: #FF8C42;
-            background: transparent;
-            padding: 8px 18px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-outline-custom:hover {
-            background: #FF8C42;
-            color: white;
-        }
-        
-        /* Product Grid untuk Kasir */
-        .product-grid {
+
+        /* ============================================
+           TRANSAKSI WRAPPER — LAYOUT 2 KOLOM
+        ============================================ */
+        .transaksi-wrapper {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            grid-template-columns: 1fr 380px;
             gap: 20px;
-            margin-bottom: 30px;
+            align-items: start;
         }
-        
+
+        .produk-panel {
+            /* panel kiri — produk */
+        }
+
+        .keranjang-panel {
+            /* panel kanan — keranjang sticky */
+        }
+
+        /* ============================================
+           PRODUCT CARD
+        ============================================ */
         .product-card {
             background: white;
             border-radius: 12px;
@@ -147,302 +252,374 @@
             cursor: pointer;
             transition: all 0.3s;
             border: 2px solid transparent;
+            height: 100%;
         }
-        
+
         .product-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(255, 140, 66, 0.2);
+            box-shadow: 0 10px 25px rgba(255,140,66,0.2);
             border-color: #FF8C42;
         }
-        
+
         .product-img {
             width: 100%;
-            height: 150px;
+            height: 130px;
             object-fit: cover;
         }
-        
+
         .product-info {
-            padding: 15px;
+            padding: 10px;
         }
-        
+
         .product-name {
             font-weight: 600;
             color: #333;
             margin-bottom: 5px;
-            font-size: 1rem;
+            font-size: 0.93rem;
         }
-        
+
         .product-price {
             color: #FF8C42;
             font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 8px;
+            font-size: 0.97rem;
+            margin-bottom: 6px;
         }
-        
-        .product-stock {
-            font-size: 0.85rem;
-            color: #666;
-        }
-        
+
         .badge-custom {
-            padding: 5px 10px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-weight: 500;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
         }
-        
-        .badge-custom.bg-success {
-            background: #d4edda !important;
-            color: #155724;
-        }
-        
-        .badge-custom.bg-danger {
-            background: #f8d7da !important;
-            color: #721c24;
-        }
-        
-        .badge-custom.bg-info {
-            background: #FFE8DC !important;
-            color: #FF8C42;
-        }
-        
-        /* Filter Buttons */
-        .filter-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
-        
-        .filter-btn {
-            padding: 8px 20px;
-            border-radius: 25px;
-            border: 2px solid #FF8C42;
-            background: transparent;
-            color: #FF8C42;
-            font-weight: 600;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: #FF8C42;
-            color: white;
-        }
-        
-        /* Cart Container */
+
+        /* ============================================
+           CART
+        ============================================ */
         .cart-container {
             background: white;
             border-radius: 12px;
-            padding: 20px;
+            padding: 18px;
             box-shadow: 0 3px 15px rgba(0,0,0,0.08);
             position: sticky;
-            top: 30px;
+            top: 170px; /* tinggi nav sticky */
             border-top: 4px solid #FF8C42;
+            max-height: calc(100vh - 190px);
+            overflow-y: auto;
         }
-        
-        .cart-header {
-            border-bottom: 2px solid #FFE8DC;
-            padding-bottom: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .cart-header h5 {
-            color: #FF8C42;
-            font-weight: 700;
-            margin: 0;
-        }
-        
+
         .cart-item {
             background: #FFF9F5;
-            padding: 12px;
+            padding: 10px 12px;
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border-left: 3px solid #FF8C42;
         }
-        
+
         .cart-total {
             background: #FFE8DC;
-            padding: 15px;
+            padding: 14px;
             border-radius: 8px;
-            margin: 15px 0;
+            margin: 10px 0;
         }
-        
-        .cart-total .total-price {
-            color: #FF8C42;
-            font-size: 1.5rem;
-            font-weight: 700;
+
+        /* Mode tabs */
+        .mode-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
         }
-        
-        /* Form Controls */
-        .form-control:focus {
+
+        .mode-tab {
+            flex: 1;
+            text-align: center;
+            padding: 8px 6px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            color: #888;
+            transition: all 0.2s;
+        }
+
+        .mode-tab.active {
+            background: #FF8C42;
+            color: white;
             border-color: #FF8C42;
-            box-shadow: 0 0 0 0.25rem rgba(255, 140, 66, 0.25);
         }
-        
-        /* Table */
+
+        /* Booking card */
+        .booking-card {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .booking-card:hover  { border-color: #FF8C42; background: #FFF9F5; }
+        .booking-card.selected { border-color: #FF8C42; background: #FFF0E6; }
+
+        .booking-name   { font-weight: 700; font-size: 14px; color: #333; }
+        .booking-detail { font-size: 12px; color: #666; margin-top: 3px; }
+
+        .dp-info-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+        }
+        .dp-label { font-size: 12px; color: #155724; font-weight: 600; }
+        .dp-value { font-size: 18px; font-weight: 700; color: #155724; }
+
+        .catatan-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-bottom: 10px;
+        }
+
+        /* ============================================
+           TABLE
+        ============================================ */
         .table-container {
             background: white;
             border-radius: 12px;
             padding: 20px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-        
+
         .table thead {
             background: #FFE8DC;
         }
-        
+
         .table thead th {
             color: #333;
             font-weight: 600;
             border: none;
-            padding: 15px;
+            padding: 13px 15px;
         }
-        
+
         .table tbody td {
-            padding: 15px;
+            padding: 12px 15px;
             vertical-align: middle;
         }
-        
-        /* Modal */
-        .modal-header.bg-success {
-            background: #FF8C42 !important;
+
+        /* pagination brand color */
+        .page-link { color: #FF8C42; }
+        .page-item.active .page-link { background: #FF8C42; border-color: #FF8C42; }
+
+        /* ============================================
+           FORM
+        ============================================ */
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #FF8C42;
+            box-shadow: 0 0 0 0.2rem rgba(255,140,66,0.2);
         }
-        
-        /* Quantity Controls */
-        .qty-control {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            padding: 5px 10px;
-            border-radius: 25px;
-            border: 1px solid #FFE8DC;
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 992px) {
+            .transaksi-wrapper {
+                grid-template-columns: 1fr;
+            }
+            .cart-container {
+                position: relative;
+                top: 0;
+                max-height: none;
+            }
         }
-        
-        .qty-btn {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: none;
-            background: #FFE8DC;
-            color: #FF8C42;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .qty-btn:hover {
-            background: #FF8C42;
-            color: white;
-        }
-        
-        /* Responsive */
+
         @media (max-width: 768px) {
-            .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-            
-            .main-content {
-                padding: 15px;
-            }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #FF8C42;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #FF6B35;
+            .main-content { padding: 15px; }
+            .navbar-inner { flex-direction: column; align-items: flex-start; padding: 8px 0; }
         }
     </style>
     @stack('styles')
 </head>
 <body>
-    <!-- Top Header -->
-    <div class="top-header">
-        <div class="logo-section">
-            <div class="logo-icon">
-                 <img src="{{ asset('storage/gambar/logo.png') }}" alt="foodesia">
+    <div class="nav-sticky-wrapper">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <img src="{{ asset('storage/gambar/logo.png') }}" alt="foodesia">
+                </div>
+                <div>
+                    <h5 class="mb-0" style="font-weight:700;">FOODESIA - Kasir Panel</h5>
+                    <small style="opacity:0.9;">Sistem Kasir Rumah Makan</small>
+                </div>
             </div>
-            <div>
-                <h5 class="mb-0" style="font-weight: 700;">FOODESIA - Kasir Panel</h5>
-                <small style="opacity: 0.9;">Sistem Kasir Rumah Makan</small>
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ strtoupper(substr(Auth::user()->nama ?? 'U', 0, 1)) }}
+                </div>
+                <div>
+                    <div style="font-weight:600;">{{ Auth::user()->nama ?? 'User' }}</div>
+                    <small style="opacity:0.9;">{{ ucfirst(Auth::user()->role) }}</small>
+                </div>
             </div>
         </div>
-        
-        <div class="user-info">
-            <div class="user-avatar">
-                {{ strtoupper(substr(Auth::user()->name ?? Auth::user()->nama ?? 'U', 0, 1)) }}
-            </div>
-            <div>
-                <div style="font-weight: 600;">{{ Auth::user()->name ?? Auth::user()->nama ?? 'User' }}</div>
-                <small style="opacity: 0.9;">{{ ucfirst(Auth::user()->role) }}</small>
+
+        <!-- Navbar Menu -->
+        <div class="navbar-menu">
+            <div class="navbar-inner">
+                <div class="menu-label">
+                    <i class="bi bi-grid"></i> MENU KASIR:
+                </div>
+                <ul class="nav-custom">
+                    <li class="nav-item">
+                        {{-- FIX: pakai routeIs yang tepat sesuai nama route dashboard kasir --}}
+                        <a href="{{ route('kasir.transactions.dashboard') }}"
+                           class="nav-link-custom {{ request()->routeIs('kasir.transactions.dashboard') ? 'active' : '' }}">
+                            <i class="bi bi-cart"></i> Transaksi Baru
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('kasir.transactions.index') }}"
+                           class="nav-link-custom {{ request()->routeIs('kasir.transactions.index') ? 'active' : '' }}">
+                            <i class="bi bi-clock-history"></i> Riwayat Transaksi
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('kasir.tables.index') }}"
+                           class="nav-link-custom {{ request()->routeIs('kasir.tables.*') ? 'active' : '' }}">
+                            <i class="bi bi-table"></i> Status Meja
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link-custom nav-link-logout" onclick="confirmLogout(event)">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
 
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Sidebar (diubah menjadi horizontal menu untuk kasir) -->
-            <div class="col-12 px-0">
-                <div class="bg-white" style="border-bottom: 3px solid #FF8C42; padding: 0 30px;">
-                    <div class="d-flex align-items-center" style="min-height: 60px;">
-                        <div class="me-4" style="color: #999; font-size: 13px; font-weight: 600;">
-                            <i class="bi bi-grid me-1"></i>MENU KASIR:
-                        </div>
-                        
-                        <ul class="nav nav-pills">
-                            <li class="nav-item">
-                                <a href="{{ route('kasir.transactions.dashboard') }}" class="nav-link {{ request()->routeIs('kasir.dashboard') ? 'active' : '' }}" style="color: #FF8C42; {{ request()->routeIs('kasir.dashboard') ? 'background: #FF8C42; color: white;' : '' }}">
-                                    <i class="bi bi-cart me-1"></i>Transaksi Baru
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('kasir.transactions.index') }}" class="nav-link {{ request()->routeIs('kasir.transactions.history') ? 'active' : '' }}" style="color: #FF8C42; {{ request()->routeIs('kasir.transactions.history') ? 'background: #FF8C42; color: white;' : '' }}">
-                                    <i class="bi bi-clock-history me-1"></i>Riwayat Transaksi
-                                </a>
-                            </li>
-                            <li class="nav-item ms-4">
-                                <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" style="color: #dc3545;">
-                                    <i class="bi bi-box-arrow-right me-1"></i>Logout
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Main Content - Full width -->
-            <div class="col-12">
-                <div class="main-content">
-                    @yield('content')
-                </div>
-            </div>
-        </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        @yield('content')
     </div>
 
     <!-- Logout Form -->
-    <form id="logout-form" action="{{ route('logout') }}" method="GET" style="display: none;">
-       
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
+        @csrf
     </form>
 
+    <!-- Toast Notification -->
+    <div id="toastNotif" style="position:fixed;top:24px;right:24px;z-index:99999;background:white;border-radius:12px;padding:16px 20px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 30px rgba(0,0,0,0.12);min-width:280px;transform:translateX(120%);transition:transform 0.3s ease;">
+        <div id="toastIcon" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;"></div>
+        <span id="toastText" style="font-size:14px;font-weight:600;color:#333;"></span>
+        <button onclick="closeToast()" style="margin-left:auto;background:none;border:none;color:#999;font-size:18px;cursor:pointer;">×</button>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirmModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;">
+        <div id="confirmBox" style="background:white;border-radius:16px;padding:30px;min-width:320px;max-width:400px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.15);transform:scale(0.9);transition:transform 0.2s;">
+            <div id="confirmIcon" style="width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;"></div>
+            <div id="confirmTitle" style="font-size:18px;font-weight:700;color:#333;margin-bottom:8px;"></div>
+            <div id="confirmDesc" style="font-size:14px;color:#666;margin-bottom:24px;"></div>
+            <div style="display:flex;gap:12px;justify-content:center;">
+                <button onclick="closeConfirm()" class="btn-outline-custom">Tidak</button>
+                <button id="confirmYesBtn" class="btn-primary-custom">Ya</button>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ── TOAST ────────────────────────────────────────────
+        let toastTimer;
+
+        function showToast(type, message) {
+            const colors = { success:'#28a745', warning:'#FF8C42', danger:'#dc3545' };
+            const icons  = { success:'bi-check-circle-fill', warning:'bi-exclamation-circle-fill', danger:'bi-x-circle-fill' };
+            const icon   = document.getElementById('toastIcon');
+            icon.style.background = colors[type] + '22';
+            icon.style.color      = colors[type];
+            icon.innerHTML = `<i class="bi ${icons[type]}"></i>`;
+            document.getElementById('toastText').textContent = message;
+            document.getElementById('toastNotif').style.transform = 'translateX(0)';
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(closeToast, 3500);
+        }
+
+        function closeToast() {
+            document.getElementById('toastNotif').style.transform = 'translateX(120%)';
+        }
+
+        // ── CONFIRM MODAL ────────────────────────────────────
+        let confirmCallback = null;
+
+        function showConfirm({ icon, iconType, title, desc, btnType, btnLabel, onYes }) {
+            const colors = { success:'#28a745', warning:'#FF8C42', danger:'#dc3545' };
+            const ci = document.getElementById('confirmIcon');
+            ci.style.background = colors[iconType] + '22';
+            ci.style.color      = colors[iconType];
+            ci.innerHTML = icon;
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmDesc').textContent  = desc;
+            const btn = document.getElementById('confirmYesBtn');
+            btn.style.background = colors[btnType] || colors['warning'];
+            btn.textContent = btnLabel;
+            confirmCallback = onYes;
+            const overlay = document.getElementById('confirmModal');
+            overlay.style.display = 'flex';
+            setTimeout(() => {
+                overlay.style.opacity = '1';
+                document.getElementById('confirmBox').style.transform = 'scale(1)';
+            }, 10);
+        }
+
+        function closeConfirm() {
+            const overlay = document.getElementById('confirmModal');
+            overlay.style.opacity = '0';
+            document.getElementById('confirmBox').style.transform = 'scale(0.9)';
+            setTimeout(() => overlay.style.display = 'none', 200);
+            confirmCallback = null;
+        }
+
+        document.getElementById('confirmYesBtn').addEventListener('click', () => {
+            if (confirmCallback) confirmCallback();
+            closeConfirm();
+        });
+
+        document.getElementById('confirmModal').addEventListener('click', e => {
+            if (e.target.id === 'confirmModal') closeConfirm();
+        });
+
+        // ── CONFIRM LOGOUT ───────────────────────────────────
+        function confirmLogout(event) {
+            event.preventDefault();
+            showConfirm({
+                icon: '<i class="bi bi-box-arrow-right"></i>',
+                iconType: 'warning',
+                title: 'Konfirmasi Logout',
+                desc: 'Apakah Anda yakin ingin keluar dari sistem?',
+                btnType: 'warning',
+                btnLabel: 'Ya, Logout',
+                onYes: () => document.getElementById('logout-form').submit()
+            });
+        }
+
+        // ── LARAVEL SESSION MESSAGES ─────────────────────────
+        @if(session('success'))
+            showToast('success', '{{ session('success') }}');
+        @endif
+        @if(session('error'))
+            showToast('danger', '{{ session('error') }}');
+        @endif
+        @if(session('warning'))
+            showToast('warning', '{{ session('warning') }}');
+        @endif
+    </script>
+
     @stack('scripts')
 </body>
 </html>

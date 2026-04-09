@@ -27,13 +27,13 @@
                     <input type="date" class="form-control" name="tanggal_mulai" id="tanggal_mulai"
                            value="{{ request('tanggal_mulai') }}">
                 </div>
-                
+
                 <div class="col-md-3 mb-3">
                     <label class="form-label">Tanggal Selesai</label>
                     <input type="date" class="form-control" name="tanggal_selesai" id="tanggal_selesai"
                            value="{{ request('tanggal_selesai') }}">
                 </div>
-                
+
                 <div class="col-md-3 mb-3">
                     <label class="form-label">Kasir</label>
                     <select class="form-select" name="kasir" id="kasir">
@@ -45,7 +45,7 @@
                         @endforeach
                     </select>
                 </div>
-                
+
                 <div class="col-md-3 mb-3">
                     <label class="form-label">Produk</label>
                     <select class="form-select" name="produk" id="produk">
@@ -58,7 +58,7 @@
                     </select>
                 </div>
             </div>
-            
+
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary-custom">
                     <i class="bi bi-funnel me-2"></i>Filter
@@ -82,7 +82,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
         <div class="card shadow-sm">
             <div class="card-body text-center">
@@ -92,7 +92,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-4">
         <div class="card shadow-sm">
             <div class="card-body text-center">
@@ -115,6 +115,8 @@
                     <th>Tanggal</th>
                     <th>Kasir</th>
                     <th>Pelanggan</th>
+                    <th>Jenis</th>
+                    <th>Meja</th>
                     <th>Produk</th>
                     <th>Jumlah</th>
                     <th>Total</th>
@@ -124,7 +126,7 @@
                 @php
                     $no = ($transactions->currentPage() - 1) * $transactions->perPage() + 1;
                 @endphp
-                
+
                 @forelse($transactions as $transaction)
                 <tr>
                     <td>{{ $no++ }}</td>
@@ -137,6 +139,18 @@
                     </td>
                     <td>{{ $transaction->user->nama }}</td>
                     <td>{{ $transaction->nama_pelanggan }}</td>
+                    <td>
+                        <span class="badge {{ $transaction->jenis_pemesanan == 'dine_in' ? 'bg-success' : 'bg-warning' }}">
+                            {{ $transaction->jenis_pemesanan == 'dine_in' ? 'Dine In' : 'Take Away' }}
+                        </span>
+                    </td>
+                    <td>
+                        @if($transaction->table)
+                            Meja {{ $transaction->table->nomor_meja }}
+                        @else
+                            -
+                        @endif
+                    </td>
                     <td>{{ $transaction->product->nama_produk }}</td>
                     <td>
                         <span class="badge bg-info">{{ $transaction->jumlah }}x</span>
@@ -145,7 +159,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="text-center py-4">
+                    <td colspan="10" class="text-center py-4">
                         <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
                         <p class="mt-2 text-muted">Tidak ada data transaksi</p>
                     </td>
@@ -154,10 +168,16 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- Pagination -->
-    <div class="mt-3">
-        {{ $transactions->appends(request()->query())->links() }}
+    <div class="d-flex justify-content-between align-items-center mt-3 px-1">
+        <small class="text-muted">
+            Menampilkan {{ $transactions->firstItem() ?? 0 }}–{{ $transactions->lastItem() ?? 0 }}
+            dari {{ $transactions->total() }} data
+        </small>
+        <div>
+            {{ $transactions->appends(request()->query())->links('pagination::bootstrap-5') }}
+        </div>
     </div>
 </div>
 @endsection
@@ -165,26 +185,21 @@
 @push('scripts')
 <script>
 function printPdf() {
-    // Ambil parameter filter dari form
-    const tanggalMulai = document.getElementById('tanggal_mulai').value;
+    const tanggalMulai  = document.getElementById('tanggal_mulai').value;
     const tanggalSelesai = document.getElementById('tanggal_selesai').value;
-    const kasir = document.getElementById('kasir').value;
+    const kasir  = document.getElementById('kasir').value;
     const produk = document.getElementById('produk').value;
-    
-    // Buat URL dengan parameter
+
     let url = '{{ route("owner.reports.pdf") }}';
     const params = new URLSearchParams();
-    
-    if (tanggalMulai) params.append('tanggal_mulai', tanggalMulai);
+
+    if (tanggalMulai)   params.append('tanggal_mulai',   tanggalMulai);
     if (tanggalSelesai) params.append('tanggal_selesai', tanggalSelesai);
-    if (kasir) params.append('kasir', kasir);
-    if (produk) params.append('produk', produk);
-    
-    if (params.toString()) {
-        url += '?' + params.toString();
-    }
-    
-    // Buka di tab baru
+    if (kasir)          params.append('kasir',  kasir);
+    if (produk)         params.append('produk', produk);
+
+    if (params.toString()) url += '?' + params.toString();
+
     window.open(url, '_blank');
 }
 </script>

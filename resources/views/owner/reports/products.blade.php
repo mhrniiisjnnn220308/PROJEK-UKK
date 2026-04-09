@@ -17,6 +17,49 @@
     </div>
 </div>
 
+<!-- Statistik Produk (dipindah ke atas) -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-box-seam text-primary" style="font-size: 48px;"></i>
+                <h3 class="mt-3">{{ $totalProduk }}</h3>
+                <p class="text-muted mb-0">Total Produk</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-check-circle text-success" style="font-size: 48px;"></i>
+                <h3 class="mt-3">{{ $totalAktif }}</h3>
+                <p class="text-muted mb-0">Produk Aktif</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-exclamation-triangle text-warning" style="font-size: 48px;"></i>
+                <h3 class="mt-3">{{ $stokMenipis }}</h3>
+                <p class="text-muted mb-0">Stok Menipis</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <i class="bi bi-x-circle text-danger" style="font-size: 48px;"></i>
+                <h3 class="mt-3">{{ $totalNonaktif }}</h3>
+                <p class="text-muted mb-0">Produk Nonaktif</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Tabel Produk -->
 <div class="table-container">
     <div class="table-responsive">
@@ -39,8 +82,8 @@
                     <td>{{ ($products->currentPage() - 1) * $products->perPage() + $index + 1 }}</td>
                     <td>
                         @if($product->foto)
-                            <img src="{{ asset('uploads/products/' . $product->foto) }}" 
-                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;" 
+                            <img src="{{ asset('uploads/products/' . $product->foto) }}"
+                                 style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"
                                  alt="{{ $product->nama_produk }}">
                         @else
                             <div style="width: 50px; height: 50px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
@@ -80,53 +123,17 @@
             </tbody>
         </table>
     </div>
-    
+
     <!-- Pagination -->
-    <div class="mt-3">
-        {{ $products->links() }}
+    <div class="d-flex justify-content-between align-items-center mt-3 px-1">
+        <small class="text-muted">
+            Menampilkan {{ $products->firstItem() ?? 0 }}–{{ $products->lastItem() ?? 0 }}
+            dari {{ $products->total() }} produk
+        </small>
+        <div>
+            {{ $products->links('pagination::bootstrap-5') }}
+        </div>
     </div>
 </div>
 
-<!-- Statistik Produk -->
-<div class="row mt-4">
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <i class="bi bi-box-seam text-primary" style="font-size: 48px;"></i>
-                <h3 class="mt-3">{{ $products->total() }}</h3>
-                <p class="text-muted mb-0">Total Produk</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <i class="bi bi-check-circle text-success" style="font-size: 48px;"></i>
-                <h3 class="mt-3">{{ \App\Models\Product::where('status', 'aktif')->count() }}</h3>
-                <p class="text-muted mb-0">Produk Aktif</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <i class="bi bi-exclamation-triangle text-warning" style="font-size: 48px;"></i>
-                <h3 class="mt-3">{{ \App\Models\Product::where('stok', '<', 10)->where('status', 'aktif')->count() }}</h3>
-                <p class="text-muted mb-0">Stok Menipis</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
-                <i class="bi bi-x-circle text-danger" style="font-size: 48px;"></i>
-                <h3 class="mt-3">{{ \App\Models\Product::where('status', 'nonaktif')->count() }}</h3>
-                <p class="text-muted mb-0">Produk Nonaktif</p>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection

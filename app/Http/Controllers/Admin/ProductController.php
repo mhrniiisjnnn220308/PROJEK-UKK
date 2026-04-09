@@ -3,104 +3,162 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Category;
-use App\Models\Log;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
+   
     public function index()
     {
-        $products = Product::with('category')->orderBy('created_at', 'desc')->get();
+        $products = Product::with('category')->get();
         $categories = Category::where('status', 'aktif')->get();
         return view('admin.products.index', compact('products', 'categories'));
     }
 
+    
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
+            'nama_produk' => 'required|string|max:255',
             'kategori_id' => 'required|exists:categories,id',
-            'nama_produk' => 'required|max:45',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'deskripsi' => 'nullable',
-            'harga_produk' => 'required|integer',
-            'stok' => 'required|integer',
+            'harga_produk' => 'required|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'deskripsi' => 'required|string',
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $data = $request->all();
-
-        // Upload foto jika ada
-        if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/products'), $filename);
-            $data['foto'] = $filename;
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error', 'Validasi gagal: ' . $validator->errors()->first());
         }
 
-        Product::create($data);
+        try {
+            $product = new Product();
+            $product->nama_produk = $request->nama_produk;
+            $product->kategori_id = $request->kategori_id;
+            $product->harga_produk = $request->harga_produk;
+            $product->stok = $request->stok;
+            $product->deskripsi = $request->deskripsi;
+            $product->status = 'aktif';
 
-        Log::create([
-            'id_user' => Auth::id(),
-            'activity' => "Menambahkan produk: {$request->nama_produk}"
-        ]);
-
-        return redirect()->route('admin.products.index')
-                         ->with('success', 'Produk berhasil ditambahkan!');
-    }
-
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'kategori_id' => 'required|exists:categories,id',
-            'nama_produk' => 'required|max:45',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'deskripsi' => 'nullable',
-            'harga_produk' => 'required|integer',
-            'stok' => 'required|integer',
-        ]);
-
-        $product = Product::findOrFail($id);
-        $data = $request->all();
-
-        // Upload foto baru jika ada
-        if ($request->hasFile('foto')) {
-            // Hapus foto lama
-            if ($product->foto && file_exists(public_path('uploads/products/' . $product->foto))) {
-                unlink(public_path('uploads/products/' . $product->foto));
+            // Upload foto
+            if ($request->hasFile('foto')) {
+                $file = $request->file('foto');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('uploads/products', $filename, 'public');
+                $product->foto = $filename;
             }
 
-            $file = $request->file('foto');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/products'), $filename);
-            $data['foto'] = $filename;
+            $product->save();
+
+            return redirect()->route('admin.products.index')
+                ->with('success', 'Produk berhasil ditambahkan!');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal menambahkan produk: ' . $e->getMessage())
+                ->withInput();
         }
-
-        $product->update($data);
-
-        Log::create([
-            'id_user' => Auth::id(),
-            'activity' => "Mengupdate produk: {$request->nama_produk}"
-        ]);
-
-        return redirect()->route('admin.products.index')
-                         ->with('success', 'Produk berhasil diupdate!');
     }
 
-    public function toggleStatus($id)
+    
+    public function update(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $newStatus = $product->status == 'aktif' ? 'nonaktif' : 'aktif';
-        $product->update(['status' => $newStatus]);
-
-        Log::create([
-            'id_user' => Auth::id(),
-            'activity' => "Mengubah status produk '{$product->nama_produk}' menjadi {$newStatus}"
+        $validator = Validator::make($request->all(), [
+            'nama_produk' => 'required|string|max:255',
+            'kategori_id' => 'required|exists:categories,id',
+            'harga_produk' => 'required|numeric|min:0',
+            'stok' => 'required|integer|min:0',
+            'deskripsi' => 'required|string',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        return redirect()->route('admin.products.index')
-                         ->with('success', 'Status produk berhasil diubah!');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('error', 'Validasi gagal: ' . $validator->errors()->first());
+        }
+
+        try {
+            $product = Product::findOrFail($id);
+            $product->nama_produk = $request->nama_produk;
+            $product->kategori_id = $request->kategori_id;
+            $product->harga_produk = $request->harga_produk;
+            $product->stok = $request->stok;
+            $product->deskripsi = $request->deskripsi;
+
+            // Upload foto baru jika ada
+            if ($request->hasFile('foto')) {
+                // Hapus foto lama
+                if ($product->foto && Storage::disk('public')->exists('uploads/products/' . $product->foto)) {
+                    Storage::disk('public')->delete('uploads/products/' . $product->foto);
+                }
+                
+                $file = $request->file('foto');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $file->storeAs('uploads/products', $filename, 'public');
+                $product->foto = $filename;
+            }
+
+            $product->save();
+
+            return redirect()->route('admin.products.index')
+                ->with('success', 'Produk berhasil diperbarui!');
+
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Gagal memperbarui produk: ' . $e->getMessage())
+                ->withInput();
+        }
+    }
+
+    
+    public function destroy($id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+            
+            // Hapus file foto jika ada
+            if ($product->foto && Storage::disk('public')->exists('uploads/products/' . $product->foto)) {
+                Storage::disk('public')->delete('uploads/products/' . $product->foto);
+            }
+            
+            $product->delete();
+            
+            return redirect()->route('admin.products.index')
+                ->with('success', 'Produk berhasil dihapus!');
+                
+        } catch (\Exception $e) {
+            return redirect()->route('admin.products.index')
+                ->with('error', 'Gagal menghapus produk: ' . $e->getMessage());
+        }
+    }
+
+    
+    public function toggle($id)
+    {
+        try {
+            $product = Product::findOrFail($id);
+            
+            // Ubah status
+            $product->status = $product->status == 'aktif' ? 'nonaktif' : 'aktif';
+            $product->save();
+            
+            $statusText = $product->status == 'aktif' ? 'diaktifkan' : 'dinonaktifkan';
+            
+            return redirect()->route('admin.products.index')
+                ->with('success', "Produk berhasil {$statusText}!");
+                
+        } catch (\Exception $e) {
+            return redirect()->route('admin.products.index')
+                ->with('error', 'Gagal mengubah status produk: ' . $e->getMessage());
+        }
     }
 }
