@@ -83,10 +83,10 @@
                     $totalItem  = $items->sum('jumlah');
                 @endphp
                 <tr>
-                    {{-- No --}}
+                    
                     <td>{{ $no++ }}</td>
 
-                    {{-- No Transaksi --}}
+                    
                     <td>
                         <strong class="text-primary" style="font-size:11px;">
                             {{ $nomorUnik }}
@@ -98,25 +98,25 @@
                         @endif
                     </td>
 
-                    {{-- Tanggal --}}
+                    
                     <td>
                         <div>{{ $first->created_at->format('d/m/Y') }}</div>
                         <small class="text-muted">{{ $first->created_at->format('H:i') }}</small>
                     </td>
 
-                    {{-- Pelanggan --}}
+                   
                     <td>
                         <strong>{{ $first->nama_pelanggan }}</strong>
                     </td>
 
-                    {{-- Jenis --}}
+                   
                     <td>
                         <span class="badge {{ $first->jenis_pemesanan === 'dine_in' ? 'bg-success' : 'bg-warning text-dark' }}">
                             {{ $first->jenis_pemesanan === 'dine_in' ? 'Dine In' : 'Take Away' }}
                         </span>
                     </td>
 
-                    {{-- Meja --}}
+                    
                     <td>
                         @if($first->table)
                             <span class="badge bg-primary">
@@ -127,7 +127,7 @@
                         @endif
                     </td>
 
-                    {{-- Pesanan --}}
+                    
                     <td style="min-width:200px;">
                         @foreach($items as $item)
                         <div class="d-flex align-items-center gap-1 mb-1">
@@ -147,29 +147,36 @@
                         </div>
                     </td>
 
-                    {{-- Pembayaran --}}
-                    <td style="min-width:150px;">
+                    
+                    <td style="min-width:160px;">
                         <strong class="text-success d-block">
                             Rp {{ number_format($grandTotal, 0, ',', '.') }}
                         </strong>
 
                         @if($first->dp_dibayar > 0)
-                        <small class="text-muted d-block">
-                            DP: Rp {{ number_format($first->dp_dibayar, 0, ',', '.') }}
-                        </small>
-                        <small class="text-muted d-block">
-                            Sisa: Rp {{ number_format($first->sisa_pembayaran, 0, ',', '.') }}
-                        </small>
-                        <small class="text-muted d-block">
-                            Bayar: Rp {{ number_format($first->uang_bayar, 0, ',', '.') }}
-                        </small>
+                            <small class="text-muted d-block">
+                                DP: Rp {{ number_format($first->dp_dibayar, 0, ',', '.') }}
+                            </small>
+                            <small class="text-muted d-block">
+                                Sisa: Rp {{ number_format($first->sisa_pembayaran, 0, ',', '.') }}
+                            </small>
+                            <small class="text-muted d-block">
+                                Bayar: Rp {{ number_format($first->uang_bayar, 0, ',', '.') }}
+                            </small>
+                            @if($first->uang_kembali > 0)
+                            <small class="text-muted d-block">
+                                Kembali: Rp {{ number_format($first->uang_kembali, 0, ',', '.') }}
+                            </small>
+                            @endif
                         @else
-                        <small class="text-muted d-block">
-                            Bayar: Rp {{ number_format($first->uang_bayar, 0, ',', '.') }}
-                        </small>
-                        <small class="text-muted d-block">
-                            Kembali: Rp {{ number_format($first->uang_kembali, 0, ',', '.') }}
-                        </small>
+                            <small class="text-muted d-block">
+                                Bayar: Rp {{ number_format($first->uang_bayar, 0, ',', '.') }}
+                            </small>
+                            @if($first->uang_kembali > 0)
+                            <small class="text-muted d-block">
+                                Kembali: Rp {{ number_format($first->uang_kembali, 0, ',', '.') }}
+                            </small>
+                            @endif
                         @endif
 
                         <span class="badge bg-success mt-1" style="font-size:10px;">
@@ -193,7 +200,7 @@
         </table>
     </div>
 
-    {{-- Pagination --}}
+    
     @if($paginator->hasPages())
     <div class="mt-3 d-flex justify-content-center">
         {{ $paginator->links('pagination::bootstrap-5') }}

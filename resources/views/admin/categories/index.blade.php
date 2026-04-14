@@ -48,11 +48,11 @@
                         <button class="btn btn-warning btn-action" onclick="editCategory({{ json_encode($category) }})" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </button>
-                        <!-- Tombol Hapus (Permanen) dengan Konfirmasi SweetAlert -->
+                       
                         <button class="btn btn-danger btn-action btn-delete" onclick="confirmDelete({{ $category->id }}, '{{ addslashes($category->nama_kategori) }}')" title="Hapus">
                             <i class="bi bi-trash"></i>
                         </button>
-                        <!-- Tombol Status (Aktif/Nonaktif) dengan Konfirmasi -->
+                       
                         <button class="btn btn-{{ $category->status == 'aktif' ? 'secondary' : 'success' }} btn-action"
                                 onclick="confirmStatusChange({{ $category->id }}, '{{ $category->status }}', '{{ addslashes($category->nama_kategori) }}')"
                                 title="{{ $category->status == 'aktif' ? 'Nonaktifkan' : 'Aktifkan' }}">
@@ -140,13 +140,13 @@
     </div>
 </div>
 
-<!-- Form Delete Tersembunyi untuk Submit via JS -->
+
 <form id="deleteForm" method="POST" style="display: none;">
     @csrf
     @method('DELETE')
 </form>
 
-<!-- Form Status Change Tersembunyi -->
+
 <form id="statusForm" method="POST" style="display: none;">
     @csrf
     @method('PUT')
@@ -156,7 +156,7 @@
 
 @push('scripts')
 <script>
-    // Fungsi Edit Kategori
+    
     function editCategory(category) {
         document.getElementById('formEdit').action = `/admin/categories/${category.id}`;
         document.getElementById('edit_nama').value = category.nama_kategori;
@@ -166,7 +166,7 @@
         modal.show();
     }
 
-    // Konfirmasi Hapus dengan SweetAlert2
+   
     function confirmDelete(categoryId, categoryName) {
         Swal.fire({
             title: 'Hapus Kategori?',
@@ -179,12 +179,12 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit form delete
+                
                 const form = document.getElementById('deleteForm');
                 form.action = `/admin/categories/${categoryId}`;
                 form.submit();
                 
-                // Tampilkan loading alert
+                
                 Swal.fire({
                     title: 'Menghapus...',
                     text: 'Kategori sedang dihapus',
@@ -197,7 +197,6 @@
         });
     }
     
-    // Konfirmasi Ubah Status (Aktif/Nonaktif)
     function confirmStatusChange(categoryId, currentStatus, categoryName) {
         let actionText = currentStatus === 'aktif' ? 'menonaktifkan' : 'mengaktifkan';
         
@@ -212,7 +211,7 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit form untuk toggle status
+                
                 const form = document.getElementById('statusForm');
                 form.action = `/admin/categories/toggle/${categoryId}`;
                 form.submit();
@@ -229,9 +228,8 @@
         });
     }
     
-    // Intercept form submit untuk Tambah dan Edit
     document.addEventListener('DOMContentLoaded', function() {
-        // Tangkap form tambah kategori
+       
         const tambahForm = document.getElementById('formTambahKategori');
         if (tambahForm) {
             tambahForm.addEventListener('submit', function(e) {
@@ -261,7 +259,7 @@
             });
         }
         
-        // Tangkap form edit kategori
+        
         const editForm = document.getElementById('formEdit');
         if (editForm) {
             editForm.addEventListener('submit', function(e) {
@@ -292,7 +290,7 @@
         }
     });
     
-    // Menampilkan notifikasi sukses/error jika ada session flash
+    
     @if(session('success'))
         Swal.fire({
             title: 'Berhasil!',

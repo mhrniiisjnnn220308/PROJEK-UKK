@@ -52,25 +52,10 @@
             justify-content: space-between;
             margin: 3px 0;
         }
-        
-        /* TAMBAHAN BARU: Style untuk info pemesanan */
-        .order-type {
-            background: #f0f0f0;
-            padding: 8px;
-            margin: 10px 0;
-            border-radius: 5px;
-            text-align: center;
-            font-weight: bold;
-        }
-        
-        .order-type.dine-in {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .order-type.take-away {
-            background: #fff3cd;
-            color: #856404;
+
+        .info-row span:last-child {
+            text-align: right;
+            max-width: 160px;
         }
         
         .items {
@@ -111,6 +96,16 @@
             padding-top: 5px;
             margin-top: 5px;
         }
+
+        .total-row.dp-row {
+            color: #0d6efd;
+            font-size: 12px;
+        }
+
+        .total-row.sisa-row {
+            color: #dc3545;
+            font-size: 12px;
+        }
         
         .footer {
             text-align: center;
@@ -121,34 +116,27 @@
         }
         
         @media print {
-            body {
-                padding: 0;
-            }
-            
-            .no-print {
-                display: none;
-            }
+            body { padding: 0; }
+            .no-print { display: none; }
         }
     </style>
 </head>
 <body>
     <div class="receipt">
-        <!-- Header -->
+
+        
         <div class="header">
             <h2>RUMAH MAKAN FOODESIA</h2>
             <p>Jl. Contoh No. 123, Bandung</p>
             <p>Telp: (022) 1234567</p>
         </div>
         
-        <!-- TAMBAHAN BARU: Info Jenis Pemesanan -->
-        <div class="order-type {{ $firstTransaction->jenis_pemesanan == 'dine_in' ? 'dine-in' : 'take-away' }}">
-            {{ $firstTransaction->jenis_pemesanan == 'dine_in' ? 'DINE IN' : 'TAKE AWAY' }}
-            @if($firstTransaction->jenis_pemesanan == 'dine_in' && $firstTransaction->table)
-                <br>MEJA: {{ $firstTransaction->table->nomor_meja }}
-            @endif
-        </div>
         
-        <!-- Info Transaksi -->
+        @php
+            $metode = $firstTransaction->metode_pembayaran ?? 'cash';
+            $jenis  = $firstTransaction->jenis_pemesanan;
+        @endphp
+
         <div class="info">
             <div class="info-row">
                 <span>No. Transaksi</span>
@@ -166,20 +154,30 @@
                 <span>Pelanggan</span>
                 <span>{{ $firstTransaction->nama_pelanggan }}</span>
             </div>
+            <div class="info-row">
+                <span>Jenis</span>
+                <span>
+                    {{ $jenis === 'dine_in' ? 'Dine In' : 'Take Away' }}
+                    @if($jenis === 'dine_in' && $firstTransaction->table)
+                        - Meja {{ $firstTransaction->table->nomor_meja }}
+                    @endif
+                </span>
+            </div>
+            <div class="info-row">
+                <span>Pembayaran</span>
+                <span>{{ $metode === 'transfer' ? 'Transfer Bank' : 'Tunai / Cash' }}</span>
+            </div>
         </div>
         
-        <!-- Item Transaksi -->
+       
         <div class="items">
-            @php
-                $grandTotal = 0;
-            @endphp
+            @php $grandTotal = 0; @endphp
             
             @foreach($transactions as $transaction)
                 @php
-                    $subtotal = $transaction->total_harga;
+                    $subtotal    = $transaction->total_harga;
                     $grandTotal += $subtotal;
                 @endphp
-                
                 <div class="item">
                     <div class="item-name">{{ $transaction->product->nama_produk }}</div>
                     <div class="item-detail">
@@ -190,27 +188,42 @@
             @endforeach
         </div>
         
-        <!-- Total -->
+       
         <div class="total">
             <div class="total-row grand">
                 <span>TOTAL</span>
                 <span>Rp {{ number_format($grandTotal, 0, ',', '.') }}</span>
             </div>
+
+            @if($firstTransaction->dp_dibayar > 0)
+            <div class="total-row dp-row">
+                <span>DP Booking</span>
+                <span>Rp {{ number_format($firstTransaction->dp_dibayar, 0, ',', '.') }}</span>
+            </div>
+            <div class="total-row sisa-row">
+                <span>Sisa Bayar</span>
+                <span>Rp {{ number_format($firstTransaction->sisa_pembayaran, 0, ',', '.') }}</span>
+            </div>
+            @endif
+
             <div class="total-row">
                 <span>Bayar</span>
                 <span>Rp {{ number_format($firstTransaction->uang_bayar, 0, ',', '.') }}</span>
             </div>
+
+            @if($firstTransaction->uang_kembali > 0)
             <div class="total-row">
                 <span>Kembali</span>
                 <span>Rp {{ number_format($firstTransaction->uang_kembali, 0, ',', '.') }}</span>
             </div>
+            @endif
         </div>
         
-        <!-- Footer -->
+       
         <div class="footer">
             <p>*** TERIMA KASIH ***</p>
             <p>Selamat datang kembali</p>
-            @if($firstTransaction->jenis_pemesanan == 'dine_in' && $firstTransaction->table)
+            @if($jenis === 'dine_in' && $firstTransaction->table)
             <p style="margin-top: 10px;">Selamat menikmati di Meja {{ $firstTransaction->table->nomor_meja }}</p>
             @else
             <p style="margin-top: 10px;">Selamat menikmati!</p>
@@ -226,12 +239,5 @@
             Tutup
         </button>
     </div>
-    
-    <script>
-        // Auto print saat halaman dibuka (opsional)
-        // window.onload = function() {
-        //     window.print();
-        // }
-    </script>
 </body>
 </html>

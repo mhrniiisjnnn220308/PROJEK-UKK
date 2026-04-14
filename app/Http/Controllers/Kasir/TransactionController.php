@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\Booking;
 use App\Models\Product;
 use App\Models\Table;
+use App\Models\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -87,6 +88,7 @@ class TransactionController extends Controller
                 'items.*.jumlah'    => 'required|integer|min:1',
                 'nama_pelanggan'    => 'required|string|max:255',
                 'jenis_pemesanan'   => 'required|in:dine_in,take_away',
+                'metode_bayar'      => 'required|in:cash,transfer',
                 'id_meja'           => 'nullable|exists:tables,id',
                 'uang_bayar'        => 'required|integer|min:0',
             ]);
@@ -131,14 +133,14 @@ class TransactionController extends Controller
 
             foreach ($itemsData as $item) {
                 Transaction::create([
-                    'booking_id'        => null,   // transaksi biasa, tidak dari booking
+                    'booking_id'        => null,
                     'nomor_unik'        => $nomorUnik,
                     'id_produk'         => $item['product']->id,
                     'id_user'           => Auth::id(),
                     'id_meja'           => $request->jenis_pemesanan === 'dine_in' ? $request->id_meja : null,
                     'nama_pelanggan'    => $request->nama_pelanggan,
                     'jenis_pemesanan'   => $request->jenis_pemesanan,
-                    'metode_pembayaran' => 'lunas',
+                    'metode_pembayaran' => $request->metode_bayar,
                     'status_pembayaran' => 'lunas',
                     'jumlah'            => $item['jumlah'],
                     'total_harga'       => $item['subtotal'],
@@ -151,6 +153,15 @@ class TransactionController extends Controller
 
                 $item['product']->decrement('stok', $item['jumlah']);
             }
+
+            // Catat log activity
+            $jenis     = $request->jenis_pemesanan === 'dine_in' ? 'Dine In' : 'Take Away';
+            $metode    = $request->metode_bayar === 'transfer' ? 'Transfer Bank' : 'Tunai';
+            $namaItems = collect($itemsData)->map(fn($i) => $i['jumlah'] . 'x ' . $i['product']->nama_produk)->join(', ');
+            Log::create([
+                'id_user'  => Auth::id(),
+                'activity' => "Transaksi [{$nomorUnik}] — Pelanggan: {$request->nama_pelanggan} | {$jenis} | {$metode} | Total: Rp " . number_format($totalHarga, 0, ',', '.') . " | {$namaItems}",
+            ]);
 
             DB::commit();
 
@@ -184,6 +195,7 @@ class TransactionController extends Controller
                 'items'             => 'required|array|min:1',
                 'items.*.id_produk' => 'required|exists:products,id',
                 'items.*.jumlah'    => 'required|integer|min:1',
+                'metode_bayar'      => 'required|in:cash,transfer',
                 'uang_bayar'        => 'required|integer|min:0',
             ]);
 
@@ -236,14 +248,14 @@ class TransactionController extends Controller
 
             foreach ($itemsData as $index => $item) {
                 Transaction::create([
-                    'booking_id'        => $booking->id,  // ← INI KUNCINYA, simpan booking_id
+                    'booking_id'        => $booking->id,
                     'nomor_unik'        => $nomorUnik,
                     'id_produk'         => $item['product']->id,
                     'id_user'           => Auth::id(),
                     'id_meja'           => $booking->id_meja,
                     'nama_pelanggan'    => $booking->nama_pelanggan,
                     'jenis_pemesanan'   => 'dine_in',
-                    'metode_pembayaran' => 'lunas',
+                    'metode_pembayaran' => $request->metode_bayar,
                     'status_pembayaran' => 'lunas',
                     'jumlah'            => $item['jumlah'],
                     'total_harga'       => $item['subtotal'],
@@ -262,6 +274,15 @@ class TransactionController extends Controller
             if ($booking->meja) {
                 $booking->meja->update(['status' => 'tersedia']);
             }
+
+           
+            $metode    = $request->metode_bayar === 'transfer' ? 'Transfer Bank' : 'Tunai';
+            $mejaNo    = $booking->meja->nomor_meja ?? '-';
+            $namaItems = collect($itemsData)->map(fn($i) => $i['jumlah'] . 'x ' . $i['product']->nama_produk)->join(', ');
+            Log::create([
+                'id_user'  => Auth::id(),
+                'activity' => "Transaksi Booking [{$nomorUnik}] — Pelanggan: {$booking->nama_pelanggan} | Meja {$mejaNo} | {$metode} | DP: Rp " . number_format($dpDibayar, 0, ',', '.') . " | Total: Rp " . number_format($totalHarga, 0, ',', '.') . " | {$namaItems}",
+            ]);
 
             DB::commit();
 

@@ -27,7 +27,7 @@ class KasirDashboardController extends Controller
                        ->orderBy('nomor_meja')
                        ->get();
 
-        // Booking yang sudah konfirmasi & belum selesai
+        
         $bookings = Booking::with('meja')
                            ->where('status', 'konfirmasi')
                            ->orderBy('tanggal_booking')

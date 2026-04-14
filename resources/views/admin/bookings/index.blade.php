@@ -93,14 +93,12 @@
                     <td>{{ \Carbon\Carbon::parse($booking->jam_kedatangan)->format('H:i') }}</td>
                     <td><small>{{ $booking->catatan_pesanan ?? '-' }}</small></td>
 
-                    {{-- Kolom DP & Bukti Transfer --}}
                     <td>
                         <strong class="text-success">
                             Rp {{ number_format($booking->jumlah_dp, 0, ',', '.') }}
                         </strong>
                         <small class="text-muted d-block">DP awal</small>
 
-                        {{-- Badge status DP --}}
                         @if($booking->status === 'selesai')
                             <span class="badge bg-success mt-1">Lunas</span>
                         @elseif($booking->status === 'batal')
@@ -113,7 +111,6 @@
                             <span class="badge bg-warning text-dark mt-1">Belum Verifikasi</span>
                         @endif
 
-                        {{-- Tombol lihat/upload bukti --}}
                         @if($booking->bukti_dp)
                             <div class="mt-1">
                                 <button class="btn btn-sm btn-outline-info py-0 px-2"
@@ -164,7 +161,7 @@
 
                     <td class="text-nowrap">
 
-                        {{-- Edit: hanya pending / konfirmasi --}}
+                        {{-- Tombol Edit --}}
                         @if(in_array($booking->status, ['pending', 'konfirmasi']))
                         <button class="btn btn-warning btn-action"
                                 data-id="{{ $booking->id }}"
@@ -175,13 +172,14 @@
                                 data-tanggal="{{ \Carbon\Carbon::parse($booking->tanggal_booking)->format('Y-m-d') }}"
                                 data-jam="{{ \Carbon\Carbon::parse($booking->jam_kedatangan)->format('H:i') }}"
                                 data-catatan="{{ $booking->catatan_pesanan }}"
+                                data-bukti="{{ $booking->bukti_dp }}"
                                 onclick="editBooking(this)"
                                 title="Edit Booking">
                             <i class="bi bi-pencil"></i>
                         </button>
                         @endif
 
-                        {{-- Konfirmasi: hanya pending dan dp sudah terverifikasi --}}
+                        {{-- Tombol Konfirmasi --}}
                         @if($booking->status === 'pending' && $booking->dp_verified)
                         <button class="btn btn-success btn-action"
                                 onclick="confirmKonfirmasi({{ $booking->id }}, '{{ addslashes($booking->nama_pelanggan) }}')"
@@ -189,7 +187,6 @@
                             <i class="bi bi-check-lg"></i>
                         </button>
                         @elseif($booking->status === 'pending' && !$booking->dp_verified)
-                        {{-- Konfirmasi langsung meski tanpa bukti (opsional, misal bayar tunai DP) --}}
                         <button class="btn btn-outline-success btn-action"
                                 onclick="confirmKonfirmasiTanpaBukti({{ $booking->id }}, '{{ addslashes($booking->nama_pelanggan) }}')"
                                 title="Konfirmasi tanpa verifikasi bukti">
@@ -197,7 +194,7 @@
                         </button>
                         @endif
 
-                        {{-- Batal: hanya pending / konfirmasi --}}
+                        {{-- Tombol Batalkan --}}
                         @if(in_array($booking->status, ['pending','konfirmasi']))
                         <button class="btn btn-danger btn-action"
                                 onclick="confirmBatal({{ $booking->id }}, '{{ addslashes($booking->nama_pelanggan) }}')"
@@ -206,30 +203,48 @@
                         </button>
                         @endif
 
-                        {{-- Selesai: tampilkan struk jika ada transaksi --}}
+                       
                         @if($booking->status === 'selesai')
-                            @if($booking->transaksi)
-                                <a href="{{ route('kasir.transactions.print', $booking->transaksi->nomor_unik) }}"
+                            @php
+                               
+                                $transaksi = $booking->transaksi ?? null;
+
+                                
+                                if (!$transaksi) {
+                                    $transaksi = $booking->transaksi()->first();
+                                }
+                            @endphp
+
+                            @if($transaksi && $transaksi->nomor_unik)
+                               
+                                <a href="{{ route('kasir.transactions.print', $transaksi->nomor_unik) }}"
                                    target="_blank"
                                    class="btn btn-info btn-action"
                                    title="Lihat Bukti Pembayaran / Struk">
                                     <i class="bi bi-receipt"></i>
                                 </a>
                             @else
-                                <button class="btn btn-secondary btn-action"
-                                        onclick="confirmHapusBooking({{ $booking->id }}, '{{ addslashes($booking->nama_pelanggan) }}')"
-                                        title="Hapus Permanen">
-                                    <i class="bi bi-trash"></i>
-                                </button>
+                                @if(Route::has('admin.bookings.print'))
+                                    <a href="{{ route('admin.bookings.print', $booking->id) }}"
+                                       target="_blank"
+                                       class="btn btn-info btn-action"
+                                       title="Lihat Struk (via Booking ID)">
+                                        <i class="bi bi-receipt"></i>
+                                    </a>
+                                @else
+                                    <button class="btn btn-info btn-action"
+                                            onclick="bukaBuktiStruk({{ $booking->id }})"
+                                            title="Cari & Lihat Struk">
+                                        <i class="bi bi-receipt"></i>
+                                    </button>
+                                @endif
                             @endif
                         @endif
-
-                        {{-- Batal: boleh hapus permanen --}}
                         @if($booking->status === 'batal')
                         <button class="btn btn-secondary btn-action"
                                 onclick="confirmHapusBooking({{ $booking->id }}, '{{ addslashes($booking->nama_pelanggan) }}')"
                                 title="Hapus Permanen">
-                                <i class="bi bi-trash"></i>
+                            <i class="bi bi-trash"></i>
                         </button>
                         @endif
 
@@ -259,9 +274,8 @@
     </small>
 </div>
 
-{{-- ================================================================== --}}
-{{-- Modal Tambah Booking                                                 --}}
-{{-- ================================================================== --}}
+
+{{-- Modal Tambah --}}
 <div class="modal fade" id="modalTambah" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -335,8 +349,6 @@
                                   placeholder="Contoh: 2 Nasi Goreng, 1 Ayam Goreng, tidak suka pedas..."></textarea>
                         <small class="text-muted">Opsional — isi jika pelanggan sudah memesan sebelumnya</small>
                     </div>
-
-                    {{-- Upload Bukti Transfer DP --}}
                     <div class="mb-3">
                         <label class="form-label">
                             Foto Bukti Transfer DP
@@ -350,7 +362,6 @@
                             <img src="" alt="Preview" class="img-thumbnail" style="max-height:160px;">
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -363,9 +374,8 @@
     </div>
 </div>
 
-{{-- ================================================================== --}}
-{{-- Modal Edit Booking                                                   --}}
-{{-- ================================================================== --}}
+
+{{-- Modal Edit --}}
 <div class="modal fade" id="modalEdit" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -440,8 +450,6 @@
                                   placeholder="Contoh: 2 Nasi Goreng, 1 Ayam Goreng, tidak suka pedas..."></textarea>
                         <small class="text-muted">Opsional — isi jika pelanggan sudah memesan sebelumnya</small>
                     </div>
-
-                    {{-- Upload / Ganti Bukti Transfer DP --}}
                     <div class="mb-3">
                         <label class="form-label">
                             Foto Bukti Transfer DP
@@ -466,7 +474,6 @@
                             <img src="" alt="Preview" class="img-thumbnail" style="max-height:160px;">
                         </div>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -479,9 +486,7 @@
     </div>
 </div>
 
-{{-- ================================================================== --}}
-{{-- Modal Upload Bukti DP (standalone, bisa diakses dari tabel)          --}}
-{{-- ================================================================== --}}
+{{-- Modal Upload Bukti --}}
 <div class="modal fade" id="modalUploadBukti" tabindex="-1">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -520,9 +525,7 @@
     </div>
 </div>
 
-{{-- ================================================================== --}}
-{{-- Modal Lihat Foto Bukti Transfer                                      --}}
-{{-- ================================================================== --}}
+{{-- Modal Lihat Bukti --}}
 <div class="modal fade" id="modalLihatBukti" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -546,7 +549,7 @@
     </div>
 </div>
 
-{{-- Hidden Forms untuk aksi status --}}
+{{-- Hidden forms untuk aksi --}}
 <form id="form-konfirmasi" method="POST" style="display:none;">
     @csrf
     @method('PUT')
@@ -568,14 +571,11 @@
 
 @push('scripts')
 <script>
-    // ----------------------------------------------------------------
-    // Preview foto sebelum upload
-    // ----------------------------------------------------------------
+
     function previewBukti(input, previewId) {
         const preview = document.getElementById(previewId);
         if (input.files && input.files[0]) {
             const file = input.files[0];
-            // Validasi ukuran (2MB)
             if (file.size > 2 * 1024 * 1024) {
                 Swal.fire({ title: 'File terlalu besar!', text: 'Maksimal ukuran file 2MB.', icon: 'warning', confirmButtonColor: '#FF8C42' });
                 input.value = '';
@@ -593,9 +593,6 @@
         }
     }
 
-    // ----------------------------------------------------------------
-    // Lihat foto bukti transfer
-    // ----------------------------------------------------------------
     function lihatBukti(url, nama) {
         document.getElementById('lihatBuktiImg').src = url;
         document.getElementById('lihatBuktiNama').textContent = nama;
@@ -603,9 +600,6 @@
         new bootstrap.Modal(document.getElementById('modalLihatBukti')).show();
     }
 
-    // ----------------------------------------------------------------
-    // Buka modal upload bukti (standalone)
-    // ----------------------------------------------------------------
     function openUploadBukti(id, nama) {
         document.getElementById('uploadBuktiNama').textContent = nama;
         document.getElementById('formUploadBukti').action = '/admin/bookings/' + id + '/upload-bukti';
@@ -614,9 +608,6 @@
         new bootstrap.Modal(document.getElementById('modalUploadBukti')).show();
     }
 
-    // ----------------------------------------------------------------
-    // Verifikasi DP (tandai DP sudah dicek admin)
-    // ----------------------------------------------------------------
     function verifikasiDp(id, nama) {
         Swal.fire({
             title: 'Verifikasi DP?',
@@ -637,9 +628,45 @@
         });
     }
 
-    // ----------------------------------------------------------------
-    // Validasi form Tambah
-    // ----------------------------------------------------------------
+    
+    function bukaBuktiStruk(bookingId) {
+        Swal.fire({
+            title: 'Mencari Struk...',
+            text: 'Mohon tunggu.',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading()
+        });
+
+        fetch(`/admin/bookings/${bookingId}/cari-transaksi`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+            Swal.close();
+            if (data.url) {
+                window.open(data.url, '_blank');
+            } else {
+                Swal.fire({
+                    title: 'Struk Tidak Ditemukan',
+                    text: data.message || 'Transaksi untuk booking ini belum tercatat di sistem kasir.',
+                    icon: 'warning',
+                    confirmButtonColor: '#FF8C42'
+                });
+            }
+        })
+        .catch(() => {
+            Swal.fire({
+                title: 'Gagal',
+                text: 'Tidak dapat menghubungi server. Coba refresh halaman.',
+                icon: 'error',
+                confirmButtonColor: '#FF8C42'
+            });
+        });
+    }
+
     function validateTambahForm() {
         let isValid = true;
         const fields = [
@@ -660,9 +687,6 @@
         return isValid;
     }
 
-    // ----------------------------------------------------------------
-    // Validasi form Edit
-    // ----------------------------------------------------------------
     function validateEditForm() {
         let isValid = true;
         const fields = [
@@ -683,9 +707,6 @@
         return isValid;
     }
 
-    // ----------------------------------------------------------------
-    // Buka modal edit & isi data
-    // ----------------------------------------------------------------
     function editBooking(btn) {
         var id      = btn.getAttribute('data-id');
         var nama    = btn.getAttribute('data-nama');
@@ -706,7 +727,6 @@
         document.getElementById('edit_jam_kedatangan').value  = jam;
         document.getElementById('edit_catatan_pesanan').value = (catatan && catatan !== 'null') ? catatan : '';
 
-        // Tampilkan bukti existing jika ada
         const existingBox = document.getElementById('edit_existing_bukti');
         const existingImg = document.getElementById('edit_existing_img');
         const hapusCb     = document.getElementById('edit_hapus_bukti');
@@ -718,7 +738,6 @@
             existingBox.style.display = 'none';
         }
 
-        // Reset preview
         document.getElementById('edit_bukti_dp').value = '';
         document.getElementById('edit_preview_bukti').style.display = 'none';
         document.querySelectorAll('#formEdit .is-invalid').forEach(el => el.classList.remove('is-invalid'));
@@ -726,15 +745,8 @@
         new bootstrap.Modal(document.getElementById('modalEdit')).show();
     }
 
-    // ----------------------------------------------------------------
-    // DOMContentLoaded
-    // ----------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', function () {
 
-        // Tambahkan data-bukti pada tombol edit (perlu ditambahkan di blade juga)
-        // Sudah dihandle via data-bukti attribute di tombol edit
-
-        // Submit TAMBAH
         const formTambah = document.getElementById('formTambah');
         if (formTambah) {
             formTambah.addEventListener('submit', function (e) {
@@ -768,7 +780,6 @@
             });
         }
 
-        // Submit EDIT
         const formEdit = document.getElementById('formEdit');
         if (formEdit) {
             formEdit.addEventListener('submit', function (e) {
@@ -802,7 +813,6 @@
             });
         }
 
-        // Flash message
         @if(session('success'))
         Swal.fire({
             title: 'Berhasil!',
@@ -825,9 +835,6 @@
 
     });
 
-    // ----------------------------------------------------------------
-    // Konfirmasi booking (DP sudah terverifikasi)
-    // ----------------------------------------------------------------
     function confirmKonfirmasi(id, nama) {
         Swal.fire({
             title: 'Konfirmasi Booking?',
@@ -850,9 +857,6 @@
         });
     }
 
-    // ----------------------------------------------------------------
-    // Konfirmasi booking tanpa bukti (admin input manual / DP tunai)
-    // ----------------------------------------------------------------
     function confirmKonfirmasiTanpaBukti(id, nama) {
         Swal.fire({
             title: 'Konfirmasi Tanpa Bukti?',
@@ -874,9 +878,6 @@
         });
     }
 
-    // ----------------------------------------------------------------
-    // Batalkan booking
-    // ----------------------------------------------------------------
     function confirmBatal(id, nama) {
         Swal.fire({
             title: 'Batalkan Booking?',
@@ -897,9 +898,6 @@
         });
     }
 
-    // ----------------------------------------------------------------
-    // Hapus permanen
-    // ----------------------------------------------------------------
     function confirmHapusBooking(id, nama) {
         Swal.fire({
             title: 'Hapus Booking?',

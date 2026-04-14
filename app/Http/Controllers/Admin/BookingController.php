@@ -7,26 +7,23 @@ use Illuminate\Http\Request;
 use App\Models\Booking;
 use App\Models\Table;
 use App\Models\Log;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class BookingController extends Controller
 {
-    
     public function index()
     {
         $bookings = Booking::with(['meja', 'transaksi'])
                            ->orderBy('id', 'desc')
                            ->get();
 
-        
         $tables = Table::whereIn('status', ['tersedia', 'reserved'])
                        ->orderBy('nomor_meja')
                        ->get();
 
         return view('admin.bookings.index', compact('bookings', 'tables'));
     }
-
 
     public function store(Request $request)
     {
@@ -41,7 +38,6 @@ class BookingController extends Controller
             'bukti_dp'        => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        
         $buktiPath  = null;
         $dpVerified = false;
 
@@ -49,7 +45,7 @@ class BookingController extends Controller
             $file      = $request->file('bukti_dp');
             $filename  = 'dp_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/bukti_dp'), $filename);
-            $buktiPath = $filename;
+            $buktiPath  = $filename;
             $dpVerified = true;
         }
 
@@ -79,7 +75,6 @@ class BookingController extends Controller
         return redirect()->back()->with('success', 'Booking berhasil ditambahkan!');
     }
 
-    
     public function update(Request $request, $id)
     {
         $booking = Booking::findOrFail($id);
@@ -107,7 +102,6 @@ class BookingController extends Controller
             }
         }
 
-       
         $buktiPath  = $booking->bukti_dp;
         $dpVerified = $booking->dp_verified;
 
@@ -119,9 +113,7 @@ class BookingController extends Controller
             $dpVerified = false;
         }
 
-        
         if ($request->hasFile('bukti_dp')) {
-           
             if ($buktiPath && file_exists(public_path('uploads/bukti_dp/' . $buktiPath))) {
                 unlink(public_path('uploads/bukti_dp/' . $buktiPath));
             }
@@ -129,7 +121,7 @@ class BookingController extends Controller
             $filename  = 'dp_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
             $file->move(public_path('uploads/bukti_dp'), $filename);
             $buktiPath  = $filename;
-            $dpVerified = true; 
+            $dpVerified = true;
         }
 
         $booking->update([
@@ -160,7 +152,6 @@ class BookingController extends Controller
             'bukti_dp' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        // Hapus file lama jika ada
         if ($booking->bukti_dp && file_exists(public_path('uploads/bukti_dp/' . $booking->bukti_dp))) {
             unlink(public_path('uploads/bukti_dp/' . $booking->bukti_dp));
         }
@@ -247,13 +238,11 @@ class BookingController extends Controller
         return redirect()->back()->with('success', 'Booking berhasil dibatalkan!');
     }
 
-    
     public function destroy($id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking     = Booking::findOrFail($id);
         $namaBooking = $booking->nama_pelanggan;
 
-        
         if ($booking->bukti_dp && file_exists(public_path('uploads/bukti_dp/' . $booking->bukti_dp))) {
             unlink(public_path('uploads/bukti_dp/' . $booking->bukti_dp));
         }
@@ -270,5 +259,45 @@ class BookingController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Booking berhasil dihapus!');
+    }
+
+
+    public function cariTransaksi($id)
+    {
+        
+        $transaksi = Transaction::where('booking_id', $id)
+                                ->whereNotNull('nomor_unik')
+                                ->first();
+
+       
+        if (!$transaksi) {
+            $booking = Booking::find($id);
+
+            if ($booking) {
+                $transaksi = Transaction::where('nama_pelanggan', $booking->nama_pelanggan)
+                                        ->where('id_meja', $booking->id_meja)
+                                        ->where('jenis_pemesanan', 'dine_in')
+                                        ->whereNull('booking_id')  
+                                        ->whereNotNull('nomor_unik')
+                                        ->orderBy('created_at', 'desc')
+                                        ->first();
+
+                
+                if ($transaksi) {
+                    Transaction::where('nomor_unik', $transaksi->nomor_unik)
+                               ->update(['booking_id' => $id]);
+                }
+            }
+        }
+
+        if ($transaksi && $transaksi->nomor_unik) {
+            return response()->json([
+                'url' => route('kasir.transactions.print', $transaksi->nomor_unik)
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Transaksi untuk booking ini belum tercatat di sistem kasir.'
+        ], 404);
     }
 }

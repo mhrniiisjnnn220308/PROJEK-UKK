@@ -26,7 +26,6 @@ class Booking extends Model
         'dp_verified'     => 'boolean',
     ];
 
-    // Relasi ke meja
     public function meja()
     {
         return $this->belongsTo(Table::class, 'id_meja');

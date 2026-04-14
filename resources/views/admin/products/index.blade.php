@@ -229,13 +229,13 @@
     </div>
 </div>
 
-<!-- Form Delete Tersembunyi untuk Submit via JS -->
+
 <form id="deleteForm" method="POST" style="display: none;">
     @csrf
     @method('DELETE')
 </form>
 
-<!-- Form Status Change Tersembunyi -->
+
 <form id="statusForm" method="POST" style="display: none;">
     @csrf
     @method('PUT')
@@ -245,7 +245,7 @@
 
 @push('scripts')
 <script>
-    // Fungsi validasi form tambah produk (SEMUA FIELD WAJIB)
+    
     function validateTambahForm() {
         let isValid = true;
         const nama = document.getElementById('tambah_nama');
@@ -255,42 +255,42 @@
         const foto = document.getElementById('tambah_foto');
         const deskripsi = document.getElementById('tambah_deskripsi');
         
-        // Reset validasi
+        
         [nama, kategori, harga, stok, foto, deskripsi].forEach(field => {
             if (field) field.classList.remove('is-invalid');
         });
         
-        // Validasi Nama
+       
         if (!nama.value.trim()) {
             nama.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Kategori
+        
         if (!kategori.value) {
             kategori.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Harga
+        
         if (!harga.value || parseFloat(harga.value) < 0) {
             harga.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Stok
+        
         if (!stok.value || parseInt(stok.value) < 0) {
             stok.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Foto
+       
         if (!foto.files || foto.files.length === 0) {
             foto.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Deskripsi
+        
         if (!deskripsi.value.trim()) {
             deskripsi.classList.add('is-invalid');
             isValid = false;
@@ -299,7 +299,7 @@
         return isValid;
     }
     
-    // Fungsi validasi form edit produk (SEMUA FIELD WAJIB)
+    
     function validateEditForm() {
         let isValid = true;
         const nama = document.getElementById('edit_nama');
@@ -309,37 +309,37 @@
         const foto = document.getElementById('edit_foto');
         const deskripsi = document.getElementById('edit_deskripsi');
         
-        // Reset validasi
+        
         [nama, kategori, harga, stok, deskripsi].forEach(field => {
             if (field) field.classList.remove('is-invalid');
         });
         if (foto) foto.classList.remove('is-invalid');
         
-        // Validasi Nama
+        
         if (!nama.value.trim()) {
             nama.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Kategori
+        
         if (!kategori.value) {
             kategori.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Harga
+       
         if (!harga.value || parseFloat(harga.value) < 0) {
             harga.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Stok
+        
         if (!stok.value || parseInt(stok.value) < 0) {
             stok.classList.add('is-invalid');
             isValid = false;
         }
         
-        // Validasi Deskripsi
+        
         if (!deskripsi.value.trim()) {
             deskripsi.classList.add('is-invalid');
             isValid = false;
@@ -348,14 +348,14 @@
         return isValid;
     }
     
-    // Fungsi untuk mendapatkan URL foto yang benar
+    
     function getFotoUrl(foto) {
         if (!foto) return null;
-        // Coba cek di storage/uploads/products dulu
+       
         return "{{ asset('storage/uploads/products') }}/" + foto;
     }
     
-    // Fungsi Edit dengan konfirmasi setelah berhasil disimpan
+    
     function editProduct(product) {
         document.getElementById('formEdit').action = `/admin/products/${product.id}`;
         document.getElementById('edit_nama').value = product.nama_produk;
@@ -366,7 +366,7 @@
         
         const fotoDiv = document.getElementById('current_foto');
         if (product.foto) {
-            // Coba cek file ada di storage atau uploads
+            
             let fotoUrl = "{{ asset('storage/uploads/products') }}/" + product.foto;
             
             fotoDiv.innerHTML = `
@@ -381,7 +381,7 @@
                     </div>
                 </div>
             `;
-            // Hapus required dari input file edit karena sudah ada foto lama
+            
             document.getElementById('edit_foto').removeAttribute('required');
         } else {
             fotoDiv.innerHTML = '<small class="text-danger">Belum ada foto! Wajib upload foto.</small>';
@@ -392,7 +392,7 @@
         modal.show();
     }
 
-    // Konfirmasi Hapus dengan SweetAlert2
+    
     function confirmDelete(productId, productName) {
         Swal.fire({
             title: 'Hapus Produk?',
@@ -405,12 +405,12 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit form delete dengan method DELETE yang benar
+                
                 const form = document.getElementById('deleteForm');
                 form.action = `/admin/products/${productId}`;
                 form.submit();
                 
-                // Tampilkan loading alert
+                
                 Swal.fire({
                     title: 'Menghapus...',
                     text: 'Produk sedang dihapus',
@@ -423,7 +423,7 @@
         });
     }
     
-    // Konfirmasi Ubah Status (Aktif/Nonaktif)
+    
     function confirmStatusChange(productId, currentStatus, productName) {
         let actionText = currentStatus === 'aktif' ? 'menonaktifkan' : 'mengaktifkan';
         
@@ -438,7 +438,7 @@
             cancelButtonText: 'Batal'
         }).then((result) => {
             if (result.isConfirmed) {
-                // Submit form untuk toggle status
+                
                 const form = document.getElementById('statusForm');
                 form.action = `/admin/products/toggle/${productId}`;
                 form.submit();
@@ -455,15 +455,15 @@
         });
     }
     
-    // Intercept form submit untuk Tambah dan Edit
+    
     document.addEventListener('DOMContentLoaded', function() {
-        // Tangkap form tambah produk
+       
         const tambahForm = document.getElementById('formTambahProduk');
         if (tambahForm) {
             tambahForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                // Validasi form terlebih dahulu (SEMUA FIELD WAJIB)
+                
                 if (!validateTambahForm()) {
                     Swal.fire({
                         title: 'Validasi Gagal!',
@@ -506,13 +506,13 @@
             });
         }
         
-        // Tangkap form edit produk
+        
         const editForm = document.getElementById('formEdit');
         if (editForm) {
             editForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                // Validasi form terlebih dahulu (SEMUA FIELD WAJIB)
+               
                 if (!validateEditForm()) {
                     Swal.fire({
                         title: 'Validasi Gagal!',
@@ -555,7 +555,7 @@
         }
     });
     
-    // Menampilkan notifikasi sukses/error jika ada session flash
+    
     @if(session('success'))
         Swal.fire({
             title: 'Berhasil!',

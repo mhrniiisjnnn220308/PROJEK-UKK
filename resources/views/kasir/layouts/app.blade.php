@@ -8,9 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
-        /* ============================================
-           RESET & GLOBAL
-        ============================================ */
+        
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -18,9 +16,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* ============================================
-           STICKY NAV
-        ============================================ */
+        
         .nav-sticky-wrapper {
             position: sticky;
             top: 0;
@@ -62,9 +58,7 @@
             white-space: nowrap;
         }
 
-        /* ============================================
-           NAVBAR LINKS
-        ============================================ */
+       
         .nav-custom {
             display: flex;
             align-items: center;
@@ -108,9 +102,7 @@
             border-color: #dc3545 !important;
         }
 
-        /* ============================================
-           BUTTONS
-        ============================================ */
+       
         .btn-primary-custom,
         button.btn-primary-custom,
         a.btn-primary-custom {
@@ -148,9 +140,7 @@
             color: white !important;
         }
 
-        /* ============================================
-           LOGO & USER
-        ============================================ */
+        
         .logo-section {
             display: flex;
             align-items: center;
@@ -195,9 +185,7 @@
             font-weight: bold;
         }
 
-        /* ============================================
-           MAIN CONTENT
-        ============================================ */
+        
         .main-content {
             padding: 25px 30px;
             min-height: calc(100vh - 170px);
@@ -223,9 +211,7 @@
             margin: 0;
         }
 
-        /* ============================================
-           TRANSAKSI WRAPPER — LAYOUT 2 KOLOM
-        ============================================ */
+       
         .transaksi-wrapper {
             display: grid;
             grid-template-columns: 1fr 380px;
@@ -234,16 +220,14 @@
         }
 
         .produk-panel {
-            /* panel kiri — produk */
+            
         }
 
         .keranjang-panel {
-            /* panel kanan — keranjang sticky */
+           
         }
 
-        /* ============================================
-           PRODUCT CARD
-        ============================================ */
+        
         .product-card {
             background: white;
             border-radius: 12px;
@@ -292,9 +276,7 @@
             font-size: 0.78rem;
         }
 
-        /* ============================================
-           CART
-        ============================================ */
+        
         .cart-container {
             background: white;
             border-radius: 12px;
@@ -322,7 +304,7 @@
             margin: 10px 0;
         }
 
-        /* Mode tabs */
+       
         .mode-tabs {
             display: flex;
             gap: 8px;
@@ -348,7 +330,7 @@
             border-color: #FF8C42;
         }
 
-        /* Booking card */
+        
         .booking-card {
             border: 2px solid #e9ecef;
             border-radius: 8px;
@@ -382,9 +364,7 @@
             margin-bottom: 10px;
         }
 
-        /* ============================================
-           TABLE
-        ============================================ */
+        
         .table-container {
             background: white;
             border-radius: 12px;
@@ -412,18 +392,14 @@
         .page-link { color: #FF8C42; }
         .page-item.active .page-link { background: #FF8C42; border-color: #FF8C42; }
 
-        /* ============================================
-           FORM
-        ============================================ */
+       
         .form-control:focus,
         .form-select:focus {
             border-color: #FF8C42;
             box-shadow: 0 0 0 0.2rem rgba(255,140,66,0.2);
         }
 
-        /* ============================================
-           RESPONSIVE
-        ============================================ */
+        
         @media (max-width: 992px) {
             .transaksi-wrapper {
                 grid-template-columns: 1fr;
@@ -444,7 +420,7 @@
 </head>
 <body>
     <div class="nav-sticky-wrapper">
-        <!-- Top Header -->
+        
         <div class="top-header">
             <div class="logo-section">
                 <div class="logo-icon">
@@ -466,7 +442,7 @@
             </div>
         </div>
 
-        <!-- Navbar Menu -->
+        
         <div class="navbar-menu">
             <div class="navbar-inner">
                 <div class="menu-label">
@@ -474,7 +450,7 @@
                 </div>
                 <ul class="nav-custom">
                     <li class="nav-item">
-                        {{-- FIX: pakai routeIs yang tepat sesuai nama route dashboard kasir --}}
+                        
                         <a href="{{ route('kasir.transactions.dashboard') }}"
                            class="nav-link-custom {{ request()->routeIs('kasir.transactions.dashboard') ? 'active' : '' }}">
                             <i class="bi bi-cart"></i> Transaksi Baru
@@ -490,6 +466,12 @@
                         <a href="{{ route('kasir.tables.index') }}"
                            class="nav-link-custom {{ request()->routeIs('kasir.tables.*') ? 'active' : '' }}">
                             <i class="bi bi-table"></i> Status Meja
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('kasir.logs.index') }}"
+                        class="nav-link-custom {{ request()->routeIs('kasir.logs.*') ? 'active' : '' }}">
+                            <i class="bi bi-journal-text"></i> Log Aktivitas
                         </a>
                     </li>
                     <li class="nav-item">

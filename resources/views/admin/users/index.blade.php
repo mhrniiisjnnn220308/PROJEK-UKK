@@ -54,19 +54,25 @@
                             <small>{{ $user->created_at->format('d/m/Y') }}</small>
                         </td>
                         <td class="text-nowrap">
-                            {{-- Tombol Edit --}}
-                            <button class="btn btn-sm btn-warning"
-                                    onclick="editUser({{ json_encode($user) }})"
-                                    title="Edit User">
-                                <i class="bi bi-pencil"></i>
-                            </button>
+                            @if($user->role === 'owner')
+                                <button class="btn btn-sm btn-secondary"
+                                        onclick="blockedOwnerAction('mengedit')"
+                                        title="Tidak dapat mengedit akun Owner">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            @else
+                                <button class="btn btn-sm btn-warning"
+                                        onclick="editUser({{ json_encode($user) }})"
+                                        title="Edit User">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                            @endif
 
                             {{-- Tombol Toggle Status --}}
                             @if($user->id != Auth::id())
                                 @if($user->role === 'owner')
-                                    {{-- Owner tidak bisa dinonaktifkan --}}
                                     <button class="btn btn-sm btn-secondary"
-                                            onclick="blockedOwnerAction('nonaktifkan')"
+                                            onclick="blockedOwnerAction('menonaktifkan')"
                                             title="Tidak dapat menonaktifkan Owner">
                                         <i class="bi bi-x-circle"></i>
                                     </button>
@@ -87,13 +93,13 @@
     </div>
 </div>
 
-{{-- Hidden form toggle status --}}
+
 <form id="form-toggle" method="POST" style="display:none;">
     @csrf
     @method('GET')
 </form>
 
-<!-- Modal Tambah User -->
+
 <div class="modal fade" id="modalTambah" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -144,7 +150,7 @@
     </div>
 </div>
 
-<!-- Modal Edit User -->
+
 <div class="modal fade" id="modalEdit" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -198,9 +204,7 @@
 
 @push('scripts')
 <script>
-    // ----------------------------------------------------------------
-    // Validasi form Tambah
-    // ----------------------------------------------------------------
+    
     function validateTambahForm() {
         let isValid = true;
         const fields = [
@@ -219,9 +223,7 @@
         return isValid;
     }
 
-    // ----------------------------------------------------------------
-    // Validasi form Edit
-    // ----------------------------------------------------------------
+    
     function validateEditForm() {
         let isValid = true;
         const fields = [
@@ -239,9 +241,7 @@
         return isValid;
     }
 
-    // ----------------------------------------------------------------
-    // Buka modal edit & isi data
-    // ----------------------------------------------------------------
+    
     function editUser(user) {
         document.getElementById('formEdit').action = `/admin/users/${user.id}`;
         document.getElementById('edit_username').value = user.username;
@@ -254,9 +254,7 @@
         new bootstrap.Modal(document.getElementById('modalEdit')).show();
     }
 
-    // ----------------------------------------------------------------
-    // Aksi yang diblokir untuk Owner
-    // ----------------------------------------------------------------
+    
     function blockedOwnerAction(aksi) {
         Swal.fire({
             title: 'Aksi Ditolak!',
@@ -267,9 +265,7 @@
         });
     }
 
-    // ----------------------------------------------------------------
-    // Konfirmasi Toggle Status (Aktif / Nonaktif)
-    // ----------------------------------------------------------------
+    
     function confirmToggleStatus(id, currentStatus, nama) {
         var actionText = currentStatus === 'aktif' ? 'menonaktifkan' : 'mengaktifkan';
         var btnColor   = currentStatus === 'aktif' ? '#6c757d' : '#198754';
@@ -296,12 +292,10 @@
         });
     }
 
-    // ----------------------------------------------------------------
-    // DOMContentLoaded — intercept form submit
-    // ----------------------------------------------------------------
+    
     document.addEventListener('DOMContentLoaded', function () {
 
-        // Submit TAMBAH
+        
         const formTambah = document.getElementById('formTambah');
         if (formTambah) {
             formTambah.addEventListener('submit', function (e) {
@@ -339,13 +333,13 @@
             });
         }
 
-        // Submit EDIT
+        
         const formEdit = document.getElementById('formEdit');
         if (formEdit) {
             formEdit.addEventListener('submit', function (e) {
                 e.preventDefault();
 
-                // Cek apakah user yang diedit adalah owner
+               
                 var roleValue = document.getElementById('edit_role').value;
                 var namaValue = document.getElementById('edit_nama').value.trim();
 
@@ -382,7 +376,7 @@
             });
         }
 
-        // Flash message sukses
+        
         @if(session('success'))
         Swal.fire({
             title: 'Berhasil!',
@@ -394,7 +388,7 @@
         });
         @endif
 
-        // Flash message error
+        
         @if(session('error'))
         Swal.fire({
             title: 'Gagal!',

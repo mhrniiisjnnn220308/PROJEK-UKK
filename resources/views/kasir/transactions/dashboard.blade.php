@@ -16,9 +16,7 @@
 
 <div class="transaksi-wrapper">
 
-    {{-- ════════════════════════════════════════
-         PANEL KIRI: Daftar Produk
-    ════════════════════════════════════════ --}}
+   
     <div class="produk-panel">
 
         {{-- Filter Kategori --}}
@@ -83,9 +81,7 @@
         </div>
     </div>
 
-    {{-- ════════════════════════════════════════
-         PANEL KANAN: Keranjang
-    ════════════════════════════════════════ --}}
+   
     <div class="keranjang-panel">
         <div class="cart-container">
 
@@ -102,7 +98,7 @@
                 </div>
             </div>
 
-            {{-- ══════ PANEL BIASA ══════ --}}
+           
             <div id="panelBiasa">
                 <div id="cartItems" class="mb-2">
                     <div class="text-center text-muted py-4">
@@ -210,7 +206,7 @@
                 </div>
             </div>
 
-            {{-- ══════ PANEL BOOKING ══════ --}}
+            
             <div id="panelBooking" style="display:none;">
 
                 @if($bookings->count() > 0)
@@ -267,10 +263,10 @@
                 </div>
                 @endif
 
-                {{-- Detail setelah booking dipilih --}}
+                
                 <div id="bookingDetail" style="display:none;">
 
-                    {{-- Info DP yang sudah dibayar --}}
+                    
                     <div class="dp-info-box">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -286,7 +282,7 @@
                                 </div>
                             </div>
                         </div>
-                        {{-- Tombol lihat bukti transfer DP --}}
+                        
                         <div id="buktiDpBox" class="mt-2" style="display:none;">
                             <button type="button" class="btn btn-sm btn-outline-info py-0 px-2"
                                     onclick="lihatBuktDpKasir()">
@@ -296,7 +292,7 @@
                         </div>
                     </div>
 
-                    {{-- Catatan pesanan dari booking --}}
+                    
                     <div id="catatanBox" class="catatan-box" style="display:none;">
                         <small class="fw-bold text-warning">
                             <i class="bi bi-sticky me-1"></i>Catatan pesanan dari booking:
@@ -304,7 +300,7 @@
                         <p class="mb-0 mt-1" id="catatanText" style="font-size:13px;"></p>
                     </div>
 
-                    {{-- Keranjang booking --}}
+                    
                     <div id="cartItemsBooking" class="mb-2">
                         <div class="text-center text-muted py-3">
                             <i class="bi bi-cart-x" style="font-size:36px;"></i>
@@ -327,7 +323,7 @@
                             <strong class="text-danger" id="bSisaTagihan">Rp 0</strong>
                         </div>
 
-                        {{-- Metode Bayar Sisa: Booking --}}
+                        
                         <div class="mb-2">
                             <label class="form-label form-label-sm">
                                 Metode Bayar Sisa <span class="text-danger">*</span>
@@ -352,7 +348,7 @@
                             </div>
                         </div>
 
-                        {{-- Field Cash Booking --}}
+                        
                         <div id="fieldCashBooking">
                             <div class="mb-2">
                                 <label class="form-label form-label-sm">
@@ -370,7 +366,7 @@
                             </div>
                         </div>
 
-                        {{-- Field Transfer Booking --}}
+                      
                         <div id="fieldTransferBooking" style="display:none;">
                             <div class="mb-2">
                                 <label class="form-label form-label-sm">
@@ -400,9 +396,7 @@
     </div>
 </div>
 
-{{-- ════════════════════════════════════════
-     Modal Lihat Bukti DP (Kasir View)
-════════════════════════════════════════ --}}
+
 <div class="modal fade" id="modalBuktiDpKasir" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -423,9 +417,7 @@
     </div>
 </div>
 
-{{-- ════════════════════════════════════════
-     Modal Sukses
-════════════════════════════════════════ --}}
+
 <div class="modal fade" id="successModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -487,7 +479,7 @@ let currentMode     = 'biasa';
 let selectedBooking = null;
 let lastTransactionNumber = '';
 
-// ── MODE ─────────────────────────────────────────────────────
+
 function setMode(mode) {
     currentMode = mode;
     document.getElementById('tabBiasa').classList.toggle('active', mode === 'biasa');
@@ -496,7 +488,7 @@ function setMode(mode) {
     document.getElementById('panelBooking').style.display = mode === 'booking' ? 'block' : 'none';
 }
 
-// ── FILTER KATEGORI ───────────────────────────────────────────
+
 function filterCategory(categoryId, btn) {
     document.querySelectorAll('[id^="catBtn_"]').forEach(b => {
         b.classList.remove('btn-success','active');
@@ -510,7 +502,7 @@ function filterCategory(categoryId, btn) {
     });
 }
 
-// ── TOGGLE METODE BAYAR ───────────────────────────────────────
+
 function toggleMetodeBiasa() {
     const isTransfer = document.getElementById('metodeTransferBiasa').checked;
     document.getElementById('fieldCashBiasa').style.display     = isTransfer ? 'none'  : 'block';
@@ -524,7 +516,7 @@ function toggleMetodeBooking() {
     document.getElementById('fieldTransferBooking').style.display = isTransfer ? 'block' : 'none';
 }
 
-// ── ADD TO CART (deteksi mode) ────────────────────────────────
+
 function addToCart(product) {
     if (currentMode === 'booking') {
         if (!selectedBooking) { showToast('warning','Pilih booking terlebih dahulu!'); return; }
@@ -534,7 +526,6 @@ function addToCart(product) {
     }
 }
 
-// ── CART BIASA ────────────────────────────────────────────────
 function addToCartBiasa(product) {
     const ex = cart.find(i => i.id === product.id);
     if (ex) {
@@ -602,7 +593,7 @@ function increaseQty(i) {
 }
 function removeFromCart(i) { cart.splice(i, 1); updateCart(); }
 
-// ── PILIH BOOKING ─────────────────────────────────────────────
+
 function pilihBookingFromCard(el) {
     document.querySelectorAll('.booking-card').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
@@ -621,11 +612,11 @@ function pilihBookingFromCard(el) {
     document.getElementById('dpNominal').textContent = 'Rp ' + fmt(selectedBooking.dp);
     document.getElementById('bDpSudah').textContent  = '- Rp ' + fmt(selectedBooking.dp);
 
-    // Tampilkan badge terverifikasi
+    
     const verifiedBadge = document.getElementById('dpVerifiedBadge');
     verifiedBadge.style.display = selectedBooking.dpVerified ? 'block' : 'none';
 
-    // Tampilkan tombol lihat bukti jika ada
+    
     const buktiBox = document.getElementById('buktiDpBox');
     buktiBox.style.display = selectedBooking.buktiUrl ? 'block' : 'none';
 
@@ -639,14 +630,14 @@ function pilihBookingFromCard(el) {
 
     document.getElementById('bookingDetail').style.display = 'block';
 
-    // Reset metode bayar ke cash
+   
     document.getElementById('metodeCashBooking').checked = true;
     toggleMetodeBooking();
 
     updateCartBooking();
 }
 
-// ── LIHAT BUKTI DP (dari kasir) ───────────────────────────────
+
 function lihatBuktDpKasir() {
     if (!selectedBooking || !selectedBooking.buktiUrl) return;
     document.getElementById('kasirBuktiImg').src  = selectedBooking.buktiUrl;
@@ -655,7 +646,7 @@ function lihatBuktDpKasir() {
     new bootstrap.Modal(document.getElementById('modalBuktiDpKasir')).show();
 }
 
-// ── CART BOOKING ──────────────────────────────────────────────
+
 function addToCartBooking(product) {
     const ex = cartBooking.find(i => i.id === product.id);
     if (ex) {
@@ -729,7 +720,7 @@ function increaseQtyBooking(i) {
 }
 function removeFromCartBooking(i) { cartBooking.splice(i, 1); updateCartBooking(); }
 
-// ── PROSES TRANSAKSI BIASA ────────────────────────────────────
+
 function processTransaction() {
     if (!cart.length) { showToast('warning','Keranjang masih kosong!'); return; }
 
@@ -789,7 +780,7 @@ function processTransaction() {
     .catch(() => showToast('danger','Terjadi kesalahan jaringan!'));
 }
 
-// ── PROSES TRANSAKSI BOOKING ──────────────────────────────────
+
 function processBookingTransaction() {
     if (!selectedBooking)    { showToast('warning','Pilih booking dulu!'); return; }
     if (!cartBooking.length) { showToast('warning','Tambahkan produk ke keranjang!'); return; }
@@ -838,7 +829,7 @@ function processBookingTransaction() {
     .catch(() => showToast('danger','Terjadi kesalahan jaringan!'));
 }
 
-// ── MODAL SUKSES ──────────────────────────────────────────────
+
 function tampilModal(total, dp, sisa, bayar, kembali, nomor, metode) {
     document.getElementById('modalNomorUnik').textContent   = nomor;
     document.getElementById('modalTotalHarga').textContent  = 'Rp ' + fmt(total);
@@ -847,7 +838,7 @@ function tampilModal(total, dp, sisa, bayar, kembali, nomor, metode) {
     document.getElementById('modalMetode').textContent      =
         metode === 'transfer' ? '🏦 Transfer Bank' : '💵 Cash';
 
-    // Sembunyikan baris kembali jika transfer
+    
     document.getElementById('modalKembaliRow').style.display =
         metode === 'transfer' ? 'none' : 'flex';
 
@@ -863,7 +854,7 @@ function tampilModal(total, dp, sisa, bayar, kembali, nomor, metode) {
     new bootstrap.Modal(document.getElementById('successModal')).show();
 }
 
-// ── HELPERS ───────────────────────────────────────────────────
+
 function toggleMejaField() {
     const show = document.getElementById('jenisPemesanan').value === 'dine_in';
     document.getElementById('mejaField').style.display = show ? 'block' : 'none';

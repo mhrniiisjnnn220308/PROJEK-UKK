@@ -1,5 +1,4 @@
 <?php
-// php artisan make:migration add_bukti_dp_to_bookings_table --table=bookings
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

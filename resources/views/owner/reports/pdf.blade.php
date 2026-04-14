@@ -82,11 +82,11 @@
         <h3>LAPORAN TRANSAKSI</h3>
         <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
     </div>
-    
+
     <!-- Filter Info -->
     <div class="filter-info">
         <strong>Filter Laporan:</strong><br>
-        Periode: 
+        Periode:
         @if($filters['tanggal_mulai'] && $filters['tanggal_selesai'])
             {{ date('d/m/Y', strtotime($filters['tanggal_mulai'])) }} s/d {{ date('d/m/Y', strtotime($filters['tanggal_selesai'])) }}
         @elseif($filters['tanggal_mulai'])
@@ -100,7 +100,7 @@
         Kasir: {{ $filters['kasir'] }}<br>
         Produk: {{ $filters['produk'] }}
     </div>
-    
+
     <!-- Statistik -->
     <div class="stats">
         <div class="stat-box">
@@ -116,7 +116,7 @@
             <h3>{{ $totalItem }}</h3>
         </div>
     </div>
-    
+
     <!-- Tabel -->
     <table>
         <thead>
@@ -157,12 +157,12 @@
             </tr>
         </tfoot>
     </table>
-    
+
     <!-- Footer -->
     <div class="footer">
         <p>
             Laporan ini dicetak oleh: {{ Auth::user()->nama }} (Owner)<br>
-            © {{ date('Y') }} Rumah Makan Foodesia - Sistem Laporan & Monitoring
+            &copy; {{ date('Y') }} Rumah Makan Foodesia - Sistem Laporan &amp; Monitoring
         </p>
     </div>
 </body>

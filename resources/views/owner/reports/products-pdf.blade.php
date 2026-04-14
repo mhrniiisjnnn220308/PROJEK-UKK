@@ -106,7 +106,7 @@
         <h3>DATA PRODUK</h3>
         <p>Dicetak pada: {{ date('d/m/Y H:i:s') }}</p>
     </div>
-    
+
     <!-- Statistik -->
     <div class="stats">
         <div class="stat-box">
@@ -126,7 +126,7 @@
             <h3>{{ $totalNonaktif }}</h3>
         </div>
     </div>
-    
+
     <!-- Tabel -->
     <table>
         <thead>
@@ -170,21 +170,21 @@
             @endforelse
         </tbody>
     </table>
-    
+
     <!-- Summary -->
     <div style="margin-top: 20px; padding: 10px; background: #f8f9fa; border-radius: 5px;">
         <strong>Ringkasan:</strong><br>
-        Total Produk: {{ $totalProduk }} | 
-        Aktif: {{ $totalAktif }} | 
-        Nonaktif: {{ $totalNonaktif }} | 
-        Stok Menipis (< 10): {{ $stokMenipis }}
+        Total Produk: {{ $totalProduk }} |
+        Aktif: {{ $totalAktif }} |
+        Nonaktif: {{ $totalNonaktif }} |
+        Stok Menipis (&lt; 10): {{ $stokMenipis }}
     </div>
-    
+
     <!-- Footer -->
     <div class="footer">
         <p>
             Laporan ini dicetak oleh: {{ Auth::user()->nama }} (Owner)<br>
-            © {{ date('Y') }} Rumah Makan Foodesia - Sistem Laporan & Monitoring
+            &copy; {{ date('Y') }} Rumah Makan Foodesia - Sistem Laporan &amp; Monitoring
         </p>
     </div>
 </body>

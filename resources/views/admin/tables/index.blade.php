@@ -78,7 +78,7 @@
 
                     <div class="d-flex gap-2 justify-content-center flex-wrap">
 
-                        {{-- Tombol Edit (hanya jika tidak terisi) --}}
+                        
                         @if($table->status != 'terisi')
                         <button class="btn btn-sm btn-warning" 
                                 onclick="editTable({{ $table->id }}, '{{ $table->nomor_meja }}', {{ $table->kapasitas }}, '{{ addslashes($table->keterangan) }}')"
@@ -87,7 +87,7 @@
                         </button>
                         @endif
 
-                        {{-- Tombol Toggle Status (tersedia ↔ reserved, hanya jika tidak terisi) --}}
+                        
                         @if($table->status != 'terisi')
                         <button class="btn btn-sm btn-info"
                                 onclick="confirmStatusChange({{ $table->id }}, '{{ $table->status }}', '{{ addslashes($table->nomor_meja) }}')"
@@ -96,7 +96,7 @@
                         </button>
                         @endif
 
-                        {{-- Tombol Selesai / Pelanggan Pulang (hanya jika terisi) --}}
+                        
                         @if($table->status == 'terisi')
                         <button class="btn btn-sm btn-success"
                                 onclick="confirmFinish({{ $table->id }}, '{{ addslashes($table->nomor_meja) }}')"
@@ -105,7 +105,7 @@
                         </button>
                         @endif
 
-                        {{-- Tombol Reservasi (hanya jika tersedia) --}}
+                        
                         @if($table->status == 'tersedia')
                         <button class="btn btn-sm btn-primary"
                                 onclick="confirmReserve({{ $table->id }}, '{{ addslashes($table->nomor_meja) }}')"
@@ -129,7 +129,7 @@
     </div>
 </div>
 
-<!-- Modal Tambah Meja -->
+
 <div class="modal fade" id="addModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -166,7 +166,7 @@
     </div>
 </div>
 
-<!-- Modal Edit Meja -->
+
 <div class="modal fade" id="editModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -204,19 +204,19 @@
     </div>
 </div>
 
-<!-- Form Status Change Tersembunyi -->
+
 <form id="statusForm" method="POST" style="display: none;">
     @csrf
     @method('PUT')
 </form>
 
-<!-- Form Selesai Tersembunyi -->
+
 <form id="finishForm" method="POST" style="display: none;">
     @csrf
     @method('PUT')
 </form>
 
-<!-- Form Reservasi Tersembunyi -->
+
 <form id="reserveForm" method="POST" style="display: none;">
     @csrf
     @method('PUT')
@@ -226,7 +226,7 @@
 
 @push('scripts')
 <script>
-    // Fungsi validasi form tambah meja
+    
     function validateTambahForm() {
         let isValid = true;
         const nomor = document.getElementById('tambah_nomor');
@@ -248,7 +248,7 @@
         return isValid;
     }
     
-    // Fungsi validasi form edit meja
+    
     function validateEditForm() {
         let isValid = true;
         const nomor = document.getElementById('edit_nomor');
@@ -270,7 +270,7 @@
         return isValid;
     }
     
-    // Fungsi Edit Meja
+    
     function editTable(id, nomorMeja, kapasitas, keterangan) {
         document.getElementById('formEdit').action = `/admin/tables/${id}`;
         document.getElementById('edit_nomor').value = nomorMeja;
@@ -281,7 +281,7 @@
         modal.show();
     }
     
-    // Konfirmasi Ubah Status (tersedia ↔ reserved)
+    
     function confirmStatusChange(tableId, currentStatus, tableName) {
         let actionText = currentStatus === 'tersedia' ? 'reservasi' : 'jadikan tersedia';
         
@@ -312,7 +312,7 @@
         });
     }
     
-    // Konfirmasi Reservasi (dari tersedia ke reserved)
+    
     function confirmReserve(tableId, tableName) {
         Swal.fire({
             title: 'Reservasi Meja',
@@ -367,7 +367,7 @@
         });
     }
     
-    // Konfirmasi Selesai (pelanggan pulang)
+    
     function confirmFinish(tableId, tableName) {
         Swal.fire({
             title: 'Tandai Selesai?',
@@ -396,9 +396,9 @@
         });
     }
     
-    // Intercept form submit untuk Tambah dan Edit
+    
     document.addEventListener('DOMContentLoaded', function() {
-        // Tangkap form tambah meja
+        
         const tambahForm = document.getElementById('formTambahMeja');
         if (tambahForm) {
             tambahForm.addEventListener('submit', function(e) {
@@ -440,7 +440,7 @@
             });
         }
         
-        // Tangkap form edit meja
+        
         const editForm = document.getElementById('formEdit');
         if (editForm) {
             editForm.addEventListener('submit', function(e) {
@@ -483,7 +483,7 @@
         }
     });
     
-    // Menampilkan notifikasi sukses/error jika ada session flash
+    
     @if(session('success'))
         Swal.fire({
             title: 'Berhasil!',

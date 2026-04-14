@@ -94,9 +94,9 @@ class ProductController extends Controller
             $product->stok = $request->stok;
             $product->deskripsi = $request->deskripsi;
 
-            // Upload foto baru jika ada
+            
             if ($request->hasFile('foto')) {
-                // Hapus foto lama
+                
                 if ($product->foto && Storage::disk('public')->exists('uploads/products/' . $product->foto)) {
                     Storage::disk('public')->delete('uploads/products/' . $product->foto);
                 }
@@ -125,7 +125,7 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
             
-            // Hapus file foto jika ada
+            
             if ($product->foto && Storage::disk('public')->exists('uploads/products/' . $product->foto)) {
                 Storage::disk('public')->delete('uploads/products/' . $product->foto);
             }
@@ -147,7 +147,7 @@ class ProductController extends Controller
         try {
             $product = Product::findOrFail($id);
             
-            // Ubah status
+            
             $product->status = $product->status == 'aktif' ? 'nonaktif' : 'aktif';
             $product->save();
             

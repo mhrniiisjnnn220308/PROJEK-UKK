@@ -11,7 +11,7 @@
         <small class="text-muted">Monitor aktivitas Admin dan Kasir</small>
     </div>
     <div>
-        <button type="button" class="btn btn-danger" onclick="printPdf()">
+        <button type="button" class="btn btn-danger" onclick="printPdf()" id="btnDownloadLogPdf">
             <i class="bi bi-file-pdf me-2"></i>Download PDF
         </button>
     </div>
@@ -197,7 +197,41 @@ function printPdf() {
 
     if (params.toString()) url += '?' + params.toString();
 
-    window.open(url, '_blank');
+    const btn = document.getElementById('btnDownloadLogPdf');
+    const originalHtml = btn.innerHTML;
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Memproses...';
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            ? document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            : ''
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Gagal mengunduh PDF');
+        return response.blob();
+    })
+    .then(blob => {
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a       = document.createElement('a');
+        a.href        = blobUrl;
+        a.download    = 'log-aktivitas.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(blobUrl);
+    })
+    .catch(error => {
+        alert('Terjadi kesalahan: ' + error.message);
+    })
+    .finally(() => {
+        btn.disabled  = false;
+        btn.innerHTML = originalHtml;
+    });
 }
 </script>
 @endpush

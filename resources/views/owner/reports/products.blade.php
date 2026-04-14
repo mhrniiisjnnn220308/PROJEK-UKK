@@ -11,13 +11,13 @@
         <small class="text-muted">Daftar semua produk dalam sistem</small>
     </div>
     <div>
-        <a href="{{ route('owner.reports.products.pdf') }}" target="_blank" class="btn btn-danger">
+        <button type="button" class="btn btn-danger" onclick="downloadProductPdf()" id="btnDownloadProductPdf">
             <i class="bi bi-file-pdf me-2"></i>Download PDF
-        </a>
+        </button>
     </div>
 </div>
 
-<!-- Statistik Produk (dipindah ke atas) -->
+<!-- Statistik Produk -->
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="card shadow-sm">
@@ -137,3 +137,47 @@
 </div>
 
 @endsection
+
+@push('scripts')
+<script>
+function downloadProductPdf() {
+    const url = '{{ route("owner.reports.products.pdf") }}';
+    const btn = document.getElementById('btnDownloadProductPdf');
+    const originalHtml = btn.innerHTML;
+
+    btn.disabled  = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Memproses...';
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')
+                            ? document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            : ''
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Gagal mengunduh PDF');
+        return response.blob();
+    })
+    .then(blob => {
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a       = document.createElement('a');
+        a.href        = blobUrl;
+        a.download    = 'data-produk.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(blobUrl);
+    })
+    .catch(error => {
+        alert('Terjadi kesalahan: ' + error.message);
+    })
+    .finally(() => {
+        btn.disabled  = false;
+        btn.innerHTML = originalHtml;
+    });
+}
+</script>
+@endpush

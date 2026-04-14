@@ -20,7 +20,7 @@
             overflow-x: hidden;
         }
 
-        /* ── Top Header (sama persis dengan admin) ── */
+        
         .top-header {
             background: linear-gradient(135deg, #FF8640 0%, #FF6B35 100%);
             color: white;
@@ -81,14 +81,14 @@
             font-weight: bold;
         }
 
-        /* ── App Wrapper (sama dengan admin) ── */
+        
         .app-wrapper {
             display: flex;
             margin-top: 110px;
             min-height: calc(100vh - 110px);
         }
 
-        /* ── Sidebar (width 260px, top 110px — sama dengan admin) ── */
+       
         .sidebar {
             background: white;
             width: 260px;
@@ -163,7 +163,6 @@
             background: #FF6B35;
         }
 
-        /* ── Main Content (margin-left 260px — sama dengan admin) ── */
         .main-content {
             margin-left: 260px;
             padding: 20px 25px;
@@ -171,7 +170,6 @@
             min-height: calc(100vh - 110px);
         }
 
-        /* ── Shared Components ── */
         .page-header {
             background: white;
             padding: 20px 30px;
@@ -387,26 +385,25 @@
                 </ul>
             </div>
 
-            <!-- Logout selalu di bawah -->
+            
             <div>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none;">
                     @csrf
                 </form>
-                {{-- Tombol logout sekarang pakai confirmLogout() --}}
                 <button class="logout-btn" onclick="confirmLogout(event)">
                     <i class="bi bi-box-arrow-left me-2"></i>Logout
                 </button>
             </div>
         </div>
 
-        <!-- ── Main Content ── -->
+       
         <div class="main-content">
             @yield('content')
         </div>
 
     </div>
 
-    <!-- Confirm Modal (sama persis seperti kasir & admin) -->
+    
     <div id="confirmModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;opacity:0;transition:opacity 0.2s;">
         <div id="confirmBox" style="background:white;border-radius:16px;padding:30px;min-width:320px;max-width:400px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,0.15);transform:scale(0.9);transition:transform 0.2s;">
             <div id="confirmIcon" style="width:70px;height:70px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:32px;"></div>
@@ -422,7 +419,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        // ✅ showConfirm — dialog konfirmasi modal
+        
         let confirmCallback = null;
 
         function showConfirm({ icon, iconType, title, desc, btnType, btnLabel, onYes }) {
@@ -466,7 +463,7 @@
             if (e.target.id === 'confirmModal') closeConfirm();
         });
 
-        // ✅ confirmLogout — sama persis seperti kasir & admin
+        
         function confirmLogout(event) {
             event.preventDefault();
 

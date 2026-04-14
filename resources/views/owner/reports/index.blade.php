@@ -11,7 +11,7 @@
         <small class="text-muted">Filter dan lihat laporan transaksi</small>
     </div>
     <div>
-        <button type="button" class="btn btn-danger" onclick="printPdf()">
+        <button type="button" class="btn btn-danger" onclick="printPdf()" id="btnDownloadPdf">
             <i class="bi bi-file-pdf me-2"></i>Download PDF
         </button>
     </div>
@@ -185,10 +185,10 @@
 @push('scripts')
 <script>
 function printPdf() {
-    const tanggalMulai  = document.getElementById('tanggal_mulai').value;
+    const tanggalMulai   = document.getElementById('tanggal_mulai').value;
     const tanggalSelesai = document.getElementById('tanggal_selesai').value;
-    const kasir  = document.getElementById('kasir').value;
-    const produk = document.getElementById('produk').value;
+    const kasir          = document.getElementById('kasir').value;
+    const produk         = document.getElementById('produk').value;
 
     let url = '{{ route("owner.reports.pdf") }}';
     const params = new URLSearchParams();
@@ -200,7 +200,41 @@ function printPdf() {
 
     if (params.toString()) url += '?' + params.toString();
 
-    window.open(url, '_blank');
+    const btn = document.getElementById('btnDownloadPdf');
+    const originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Memproses...';
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]') 
+                            ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') 
+                            : ''
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error('Gagal mengunduh PDF');
+        return response.blob();
+    })
+    .then(blob => {
+        const blobUrl   = window.URL.createObjectURL(blob);
+        const a         = document.createElement('a');
+        a.href          = blobUrl;
+        a.download      = 'laporan-transaksi.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(blobUrl);
+    })
+    .catch(error => {
+        alert('Terjadi kesalahan: ' + error.message);
+    })
+    .finally(() => {
+        btn.disabled    = false;
+        btn.innerHTML   = originalHtml;
+    });
 }
 </script>
 @endpush

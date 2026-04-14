@@ -49,10 +49,11 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
     Route::prefix('bookings')->name('admin.bookings.')->group(function () {
     Route::get('/',         [App\Http\Controllers\Admin\BookingController::class, 'index'])   ->name('index');
     Route::post('/',        [App\Http\Controllers\Admin\BookingController::class, 'store'])   ->name('store');
-    Route::put('/{id}',     [App\Http\Controllers\Admin\BookingController::class, 'update'])  ->name('update');   // ← ini yang penting untuk edit
+    Route::put('/{id}',     [App\Http\Controllers\Admin\BookingController::class, 'update'])  ->name('update');  
     Route::delete('/{id}',  [App\Http\Controllers\Admin\BookingController::class, 'destroy']) ->name('destroy');
     Route::put('/{id}/konfirmasi', [App\Http\Controllers\Admin\BookingController::class, 'konfirmasi'])->name('konfirmasi');
     Route::put('/{id}/batal',      [App\Http\Controllers\Admin\BookingController::class, 'batal'])     ->name('batal');
+    Route::get('/{id}/cari-transaksi',  [BookingController::class, 'cariTransaksi'])->name('cariTransaksi');
 });
     // Users
     Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
@@ -62,7 +63,7 @@ Route::prefix('admin')->middleware(['auth', 'role:admin'])->group(function () {
 });
 
 // Kasir Routes
-Route::prefix('kasir')->name('kasir.')->middleware(['auth', 'role:kasir'])->group(function () {
+Route::prefix('kasir')->name('kasir.')->middleware(['auth', 'role:kasir,admin'])->group(function () {
     Route::get('/dashboard',                  [TransactionController::class, 'dashboard'])->name('transactions.dashboard');
     Route::get('/transactions',               [TransactionController::class, 'index'])->name('transactions.index');
     Route::post('/transactions',              [TransactionController::class, 'store'])->name('transactions.store');
@@ -71,6 +72,7 @@ Route::prefix('kasir')->name('kasir.')->middleware(['auth', 'role:kasir'])->grou
     Route::get('/tables',                     [KasirTableController::class, 'index'])->name('tables.index');
     Route::patch('/tables/{table}/bebaskan',  [KasirTableController::class, 'bebaskan'])->name('tables.bebaskan');
     Route::patch('/tables/{table}/selesai',   [KasirTableController::class, 'selesai'])->name('tables.selesai');
+    Route::get('/logs', [\App\Http\Controllers\Kasir\KasirLogController::class, 'index'])->name('logs.index');
 });
 
 // Owner Routes

@@ -10,7 +10,7 @@ use App\Models\Log;
 
 class AuthController extends Controller
 {
-    // Tampilkan halaman login
+    
     public function showLogin()
     {
         // Jika sudah login, redirect ke dashboard sesuai role

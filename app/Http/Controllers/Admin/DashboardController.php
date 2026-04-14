@@ -22,7 +22,7 @@ class DashboardController extends Controller
                             ->distinct('nomor_unik')
                             ->count('nomor_unik');
 
-        // ── Statistik transaksi 
+        
         $totalPendapatan = Transaction::sum('total_harga');
 
         $totalDineIn = Transaction::where('jenis_pemesanan', 'dine_in')
@@ -35,7 +35,7 @@ class DashboardController extends Controller
                           ->distinct('nomor_unik')
                           ->count('nomor_unik');
 
-        // ── Pagination Log Aktivitas (Admin only) 
+       
         $logPerPage     = 10;
         $logPage        = max(1, (int) $request->get('log_page', 1));
 
@@ -83,13 +83,13 @@ class DashboardController extends Controller
             'totalPendapatan',
             'totalDineIn',
             'totalTakeAway',
-            // log
+            
             'logs',
             'logPage',
             'totalLogPages',
             'logPerPage',
             'totalLogs',
-            // transaksi
+            
             'semuaTransaksi',
             'trxPage',
             'totalTrxPages',

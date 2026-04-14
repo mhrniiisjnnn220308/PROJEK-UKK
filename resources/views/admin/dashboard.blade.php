@@ -4,7 +4,7 @@
 
 @push('styles')
 <style>
-    /* ── Alert stok rendah ─────────────────────────── */
+   
     .alert-stok-rendah {
         background: #FFF7ED;
         border: 1px solid #FED7AA;
@@ -15,7 +15,7 @@
         margin-bottom: 20px;
     }
 
-    /* ── Card ringkasan transaksi ──────────────────── */
+    
     .transaksi-stat-card {
         background: #f8f9fa;
         border-radius: 10px;
@@ -29,7 +29,7 @@
     .transaksi-stat-card h6 { font-size: 13px; }
     .transaksi-stat-card small { color: #6c757d; font-size: 12px; }
 
-    /* ── Pagination warna brand ────────────────────── */
+   
     .page-link {
         color: #FF8C42;
         border-color: #dee2e6;
@@ -42,7 +42,7 @@
     }
     .page-item.disabled .page-link { color: #adb5bd; }
 
-    /* ── Tabel ─────────────────────────────────────── */
+    
     .table thead th {
         background: #FFE8DC;
         color: #333;
@@ -52,7 +52,7 @@
     }
     .table tbody td { padding: 12px 15px; vertical-align: middle; }
 
-    /* ── Footer pagination bar ─────────────────────── */
+    
     .pagination-bar {
         display: flex;
         justify-content: space-between;
@@ -77,9 +77,7 @@
     Selamat Datang Admin!
 </div>
 
-{{-- =========================================================
-     STATISTIK CARDS
-     ========================================================= --}}
+
 <div class="row g-4 mb-4">
     <div class="col-md-4">
         <div class="stat-card stat-card-1">
@@ -112,9 +110,7 @@
 </div>
 @endif
 
-{{-- =========================================================
-     LOG AKTIVITAS — ADMIN ONLY
-     ========================================================= --}}
+
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white d-flex align-items-center">
         <h5 class="mb-0">
@@ -193,9 +189,7 @@
     </div>
 </div>
 
-{{-- =========================================================
-     RIWAYAT TRANSAKSI KASIR
-     ========================================================= --}}
+
 <div class="card shadow-sm mb-4">
     <div class="card-header bg-white">
         <h5 class="mb-0">
